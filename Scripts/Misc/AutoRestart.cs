@@ -1,3 +1,13 @@
+/****************************** AutoRestart.cs ********************************
+ * Modified by Lokai for Free Ultima Online shards
+ *   This completely custom version includes several commands to assist
+ *   in managing your restart, whether automated or manual.
+/***************************************************************************
+ *   This program is free software; you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation; either version 2 of the License, or
+ *   (at your option) any later version.
+ ***************************************************************************/
 using System;
 using System.Collections.Generic;
 using Server.Commands;
@@ -6,25 +16,26 @@ namespace Server.Misc
 {
     public class AutoRestart : Timer
     {
-        private static bool m_Enabled = false; // is auto-restarting enabled?
+        private static readonly RestartType RestartFrequency = RestartType.Daily; // The server restarts daily or weekly on a particular day of the week.
+        private static readonly DayOfWeek RestartDay = DayOfWeek.Monday; // IF the server restarts weekly, the day of week is set here.
+        private static readonly TimeSpan RestartDelay = TimeSpan.Zero; // Here we set how long to delay the restart once the timer has finished.
 
+        private enum RestartType { Daily, Weekly }
+        private static bool m_Enabled = false; // is auto-restarting enabled?
         public static bool Enabled { get { return m_Enabled; } }
 
-        private static TimeSpan RestartTimeOfDay = TimeSpan.FromHours(2.0); // time of day at which to restart (in Server (UTC) time.)
-        private static readonly TimeSpan RestartDelay = TimeSpan.Zero; // how long to delay restart once the timer has finished.
-
+        private static TimeSpan RestartTimeOfDay = TimeSpan.FromHours(2.0); // The time of day at which to restart (in Server (UTC) time.)
         private static List<double> WarningDelays;
-
         private static string RestartMessage = "The server will be restarting for routine maintenance";
-
         private static bool m_Restarting;
+        public static bool Restarting { get { return m_Restarting; } }
         private static DateTime m_RestartDateTime;
         private static DateTime m_NextWarningTime;
         private static int WarningColor = 0x22;
 
         private static List<bool> WarningDelaysNOTSent;
 
-        private static void ResetWarningDelayBools()
+        private static void ResetWarningDelayBools(bool auto)
         {
             // -------------------- START HERE ----------------------
             // At what time interval(s) (in minutes) should the restart warning be displayed prior to restart?
@@ -32,8 +43,18 @@ namespace Server.Misc
             // -------------------- START HERE ----------------------
             WarningDelays = new List<double>() { 1.0, 2.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 45.0 };
 
-            m_RestartDateTime = DateTime.UtcNow.Date + RestartTimeOfDay;
-            if (m_RestartDateTime < DateTime.UtcNow) m_RestartDateTime += TimeSpan.FromDays(1.0);
+			if (auto)
+			{
+				m_RestartDateTime = DateTime.UtcNow.Date + RestartTimeOfDay;
+				if (m_RestartDateTime < DateTime.UtcNow) m_RestartDateTime += TimeSpan.FromDays(1.0);
+				if (RestartFrequency == RestartType.Weekly)
+				{
+					while(m_RestartDateTime.DayOfWeek != RestartDay)
+					{
+						m_RestartDateTime += TimeSpan.FromDays(1.0);
+					}
+				}
+			}
 
             WarningDelaysNOTSent = new List<bool>();
             for (int i = 0; i < WarningDelays.Count; i++)
@@ -45,7 +66,7 @@ namespace Server.Misc
         public AutoRestart()
             : base(TimeSpan.FromSeconds(1.0), TimeSpan.FromSeconds(1.0))
         {
-            this.Priority = TimerPriority.FiveSeconds;
+            Priority = TimerPriority.FiveSeconds;
         }
 
         private static int getWarningColor(string color)
@@ -67,6 +88,7 @@ namespace Server.Misc
                 case "brown":
                     return Utility.RandomBirdHue();
                 default:
+                    try { return int.Parse(color); } catch { } // Maybe they typed a number...
                     return Utility.RandomDyedHue();
             }
         }
@@ -75,30 +97,22 @@ namespace Server.Misc
         {
             return m_RestartDateTime - TimeSpan.FromMinutes(nextDelay);
         }
-
-        public static bool Restarting
-        {
-            get
-            {
-                return m_Restarting;
-            }
-        }
         public static void Initialize()
         {
-            CommandSystem.Register("Restart", AccessLevel.Administrator, new CommandEventHandler(Restart_OnCommand));
-            CommandSystem.Register("AutoRestartOn", AccessLevel.Administrator, new CommandEventHandler(AutoRestartOn_OnCommand));
-            CommandSystem.Register("AutoRestartOff", AccessLevel.Administrator, new CommandEventHandler(AutoRestartOff_OnCommand));
-            CommandSystem.Register("AutoRestartWhen", AccessLevel.Administrator, new CommandEventHandler(AutoRestartWhen_OnCommand));
-            CommandSystem.Register("AutoRestartTime", AccessLevel.Administrator, new CommandEventHandler(AutoRestartTime_OnCommand));
-            CommandSystem.Register("AutoRestartColor", AccessLevel.Administrator, new CommandEventHandler(AutoRestartColor_OnCommand));
-            CommandSystem.Register("AutoRestartText", AccessLevel.Administrator, new CommandEventHandler(AutoRestartText_OnCommand));
-            CommandSystem.Register("AR-On", AccessLevel.Administrator, new CommandEventHandler(AutoRestartOn_OnCommand));
-            CommandSystem.Register("AR-Off", AccessLevel.Administrator, new CommandEventHandler(AutoRestartOff_OnCommand));
-            CommandSystem.Register("AR-When", AccessLevel.Administrator, new CommandEventHandler(AutoRestartWhen_OnCommand));
-            CommandSystem.Register("AR-Time", AccessLevel.Administrator, new CommandEventHandler(AutoRestartTime_OnCommand));
-            CommandSystem.Register("AR-Color", AccessLevel.Administrator, new CommandEventHandler(AutoRestartColor_OnCommand));
-            CommandSystem.Register("AR-Text", AccessLevel.Administrator, new CommandEventHandler(AutoRestartText_OnCommand));
-            ResetWarningDelayBools();
+            CommandSystem.Register("Restart", AccessLevel.Administrator, Restart_OnCommand);
+            CommandSystem.Register("AutoRestartOn", AccessLevel.Administrator, AutoRestartOn_OnCommand);
+            CommandSystem.Register("AutoRestartOff", AccessLevel.Administrator, AutoRestartOff_OnCommand);
+            CommandSystem.Register("AutoRestartWhen", AccessLevel.Administrator, AutoRestartWhen_OnCommand);
+            CommandSystem.Register("AutoRestartTime", AccessLevel.Administrator, AutoRestartTime_OnCommand);
+            CommandSystem.Register("AutoRestartColor", AccessLevel.Administrator, AutoRestartColor_OnCommand);
+            CommandSystem.Register("AutoRestartText", AccessLevel.Administrator, AutoRestartText_OnCommand);
+            CommandSystem.Register("AR-On", AccessLevel.Administrator, AutoRestartOn_OnCommand);
+            CommandSystem.Register("AR-Off", AccessLevel.Administrator, AutoRestartOff_OnCommand);
+            CommandSystem.Register("AR-When", AccessLevel.Administrator, AutoRestartWhen_OnCommand);
+            CommandSystem.Register("AR-Time", AccessLevel.Administrator, AutoRestartTime_OnCommand);
+            CommandSystem.Register("AR-Color", AccessLevel.Administrator, AutoRestartColor_OnCommand);
+            CommandSystem.Register("AR-Text", AccessLevel.Administrator, AutoRestartText_OnCommand);
+            ResetWarningDelayBools(true);
             new AutoRestart().Start();
         }
 
@@ -140,8 +154,8 @@ namespace Server.Misc
             {
                 RestartTimeOfDay = TimeSpan.FromHours(double.Parse(e.Arguments[0]));
                 m_RestartDateTime = DateTime.UtcNow.Date + RestartTimeOfDay;
-                e.Mobile.SendMessage("Restart time set to {0}.", m_RestartDateTime.TimeOfDay);
-                ResetWarningDelayBools();
+                e.Mobile.SendMessage("Restart time set to {0} {1}.", m_RestartDateTime.ToShortTimeString(), RestartFrequency == RestartType.Daily ? "Daily" : RestartDay.ToString());
+                ResetWarningDelayBools(true);
             }
             catch
             {
@@ -153,8 +167,8 @@ namespace Server.Misc
         [Description("Displays the time of day set for AutoRestart.")]
         private static void AutoRestartWhen_OnCommand(CommandEventArgs e)
         {
-            e.Mobile.SendMessage("AutoRestart is {0}scheduled for {1}.",
-                Enabled ? "" : "DISABLED, but if enabled would be ", m_RestartDateTime.TimeOfDay);
+            e.Mobile.SendMessage("AutoRestart is {0}scheduled for {1} {2}.",
+                Enabled ? "" : "DISABLED, but if enabled would be ", m_RestartDateTime.ToShortTimeString(), RestartFrequency == RestartType.Daily ? "Daily" : RestartDay.ToString());
         }
 
         [Usage("AutoRestartOff")]
@@ -189,6 +203,7 @@ namespace Server.Misc
                     minutes > 0 ? string.Format(" for {0} minutes from now.", (int) minutes) : "");
                 m_Enabled = true;
                 m_RestartDateTime = DateTime.UtcNow + TimeSpan.FromMinutes(minutes);
+				ResetWarningDelayBools(false);
             }
         }
 
