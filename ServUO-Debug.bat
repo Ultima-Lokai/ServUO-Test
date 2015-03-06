@@ -1,0 +1,1 @@
+ServUO.exe -debug
