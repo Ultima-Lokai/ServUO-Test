@@ -1,11 +1,234 @@
 using System;
+using System.Collections.Generic;
 using Server;
+using Server.Gumps;
 using Server.Items;
 using Server.Mobiles;
+using Server.Network;
 
 namespace Server.Engines.Quests
 {
     public class HumilityCloakQuest : BaseQuest
+    {
+        /* Greetings my friend! My name is Gareth, and I represent a group of citizens who wish to rejuvenate interest in our kingdom's noble heritage. 
+         * 'Tis our belief that one of Britannia's greatest triumphs was the institution of the Virtues, neglected though they be now. To that end I 
+         * have a set of tasks prepared for one who would follow a truly Humble path. Art thou interested in joining our effort? */
+        public override object Description { get { return 1075675; } }
+
+        /* Wonderful! First, let us see if thou art reading from the same roll of parchment as we are. *smiles* */
+        public override object Complete { get { return 1075676; } }
+
+        /* I wish that thou wouldest reconsider. */
+        public override object Refuse { get { return 1075677; } }
+
+        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA1); } }
+        public override bool DoneOnce { get { return true; } }
+
+        public override void OnAccept()
+        {
+            this.OnCompleted();
+        }
+
+        public override void OnRefuse()
+        {
+            base.OnRefuse();
+        }
+
+        public HumilityCloakQuest()
+        {
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }
+    public class HumilityCloakQuestQA1 : BaseQuest
+    {
+        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA2); } }
+        public override bool DoneOnce { get { return true; } }
+
+        public HumilityCloakQuestQA1()
+        {
+            AddObjective(new AnswerObjective(this, 1075678, new int[] { 1075679, 1075680, 1075681, 1075682 }, 1075679));
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }
+    public class HumilityCloakQuestQA2 : BaseQuest
+    {
+        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA3); } }
+        public override bool DoneOnce { get { return true; } }
+
+        public HumilityCloakQuestQA2()
+        {
+            AddObjective(new AnswerObjective(this, 1075683, new int[] { 1075684, 1075685, 1075686, 1075687 }, 1075685));
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }
+    public class HumilityCloakQuestQA3 : BaseQuest
+    {
+        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA4); } }
+        public override bool DoneOnce { get { return true; } }
+
+        public HumilityCloakQuestQA3()
+        {
+            AddObjective(new AnswerObjective(this, 1075688, new int[] { 1075689, 1075690, 1075691, 1075692 }, 1075691));
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }
+    public class HumilityCloakQuestQA4 : BaseQuest
+    {
+        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA5); } }
+        public override bool DoneOnce { get { return true; } }
+
+        public HumilityCloakQuestQA4()
+        {
+            AddObjective(new AnswerObjective(this, 1075693, new int[] { 1075694, 1075695, 1075696, 1075697 }, 1075697));
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }
+    public class HumilityCloakQuestQA5 : BaseQuest
+    {
+        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA6); } }
+        public override bool DoneOnce { get { return true; } }
+
+        public HumilityCloakQuestQA5()
+        {
+            AddObjective(new AnswerObjective(this, 1075698, new int[] { 1075699, 1075700, 1075701, 1075702 }, 1075700));
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }
+    public class HumilityCloakQuestQA6 : BaseQuest
+    {
+        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA7); } }
+        public override bool DoneOnce { get { return true; } }
+
+        public HumilityCloakQuestQA6()
+        {
+            AddObjective(new AnswerObjective(this, 1075703, new int[] { 1075704, 1075705, 1075706, 1075707 }, 1075705));
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }
+    public class HumilityCloakQuestQA7 : BaseQuest
+    {
+        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
+        public override Type NextQuest { get { return typeof(HumilityCloak1Quest); } }
+        public override bool DoneOnce { get { return true; } }
+
+        public HumilityCloakQuestQA7()
+        {
+            AddObjective(new AnswerObjective(this, 1075708, new int[] { 1075709, 1075710, 1075711, 1075712 }, 1075709));
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.Write((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadInt();
+        }
+    }
+    public class HumilityCloak1Quest : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
         public override Type NextQuest { get { return typeof(HumilityCloak2Quest); } }
@@ -30,7 +253,7 @@ namespace Server.Engines.Quests
          * that thine donation hath supported. */
         public override object Complete { get { return 1075721; } }
 
-        public HumilityCloakQuest()
+        public HumilityCloak1Quest()
             : base()
         {
             AddObjective(new ObtainObjective(typeof(HumilityCrookReplica), "A Replica of the Shepherd's Crook of Humility", 1, 0x0E82));
@@ -277,10 +500,10 @@ namespace Server.Engines.Quests
         {
             get
             {
-                return new Type[] 
-		{ 
-			typeof( HumilityCloakQuest )
-		};
+                return new Type[]
+                {
+                    typeof (HumilityCloakQuest)
+                };
             }
         }
 
@@ -288,10 +511,11 @@ namespace Server.Engines.Quests
         public Gareth()
             : base("Gareth", "Emissary of the RBC")
         {
-            if (!(this is MondainQuester))
+        }
 
-                this.Name = "Gareth";
-            this.Title = "Emissary of the RBC";
+        public override void Advertise()
+        {
+            this.Say(1075674); // Hail! Care to join our efforts for the Rise of Britannia?
         }
 
         public Gareth(Serial serial)
@@ -334,6 +558,180 @@ namespace Server.Engines.Quests
             base.Deserialize(reader);
 
             int version = reader.ReadInt();
+        }
+    }
+
+    public class AnswerObjective : BaseObjective
+    {
+        private string m_QuestionString;
+        private int m_QuestionNumber;
+        private string[] m_AnswerStrings;
+        private int[] m_AnswerNumbers;
+        private string m_CorrectString;
+        private int m_CorrectNumber;
+
+        public string QuestionString { get { return m_QuestionString; } set { m_QuestionString = value; } }
+        public int QuestionNumber { get { return m_QuestionNumber; } set { m_QuestionNumber = value; } }
+        public string[] AnswerStrings { get { return m_AnswerStrings; } set { m_AnswerStrings = value; } }
+        public int[] AnswerNumbers { get { return m_AnswerNumbers; } set { m_AnswerNumbers = value; } }
+        public string CorrectString { get { return m_CorrectString; } set { m_CorrectString = value; } }
+        public int CorrectNumber { get { return m_CorrectNumber; } set { m_CorrectNumber = value; } }
+
+        public AnswerObjective(BaseQuest quest, int question, int[] answers, int correctAnswer)
+            : this(string.Empty, question, null, answers, string.Empty, correctAnswer)
+        {
+        }
+
+        public AnswerObjective(string question, string[] answers, string correctAnswer)
+            : this(question, 0, answers, null, correctAnswer, 0)
+        {
+        }
+
+        public AnswerObjective(string questionString, int questionNumber, string[] answerStrings, int[] answerNumbers, string correctString, int correctNumber)
+            : base()
+        {
+            m_QuestionString = questionString;
+            m_QuestionNumber = questionNumber;
+            m_AnswerStrings = answerStrings;
+            m_AnswerNumbers = answerNumbers;
+            m_CorrectString = correctString;
+            m_CorrectNumber = correctNumber;
+        }
+        public override bool Update(object obj)
+        {
+
+            return false;
+        }
+
+        public override void OnAccept()
+        {
+            if (m_QuestionNumber == 0)
+                this.Quest.Owner.SendGump(new QuestionAnswerGump(this, m_QuestionString, m_AnswerStrings,
+                    m_CorrectString));
+        }
+
+        public override void OnCompleted()
+        {
+        }
+
+        public override void Serialize(GenericWriter writer)
+        {
+            base.Serialize(writer);
+
+            writer.WriteEncodedInt((int)0); // version
+        }
+
+        public override void Deserialize(GenericReader reader)
+        {
+            base.Deserialize(reader);
+
+            int version = reader.ReadEncodedInt();
+        }
+    }
+
+    public class QuestionAnswerGump : BaseQuestGump
+    {
+        private AnswerObjective mObjective;
+        private object mQuestion;
+        private object[] mAnswers;
+        private object mCorrectAnswer;
+
+        public QuestionAnswerGump(AnswerObjective objective, object question, object[] answers, object correctAnswer)
+            : base(75, 25)
+        {
+            mObjective = objective;
+            mQuestion = question;
+            answers.Shuffle().CopyTo(mAnswers, 0);
+            mCorrectAnswer = correctAnswer;
+
+            int lowY = 385;
+            int answerNum = 0;
+
+            Closable = false;
+
+            AddPage(0);
+
+            AddImageTiled(50, 20, 400, 400, 2624);
+            AddAlphaRegion(50, 20, 400, 400);
+
+            AddImage(90, 33, 9005);
+            AddHtmlObject(130, 45, 270, 20, mQuestion, White, false, false); // Question
+            AddImageTiled(130, 65, 175, 1, 9101);
+
+            foreach (object answer in mAnswers)
+            {
+                AddRadio(85, lowY, 9720, 9723, true, answerNum);
+                AddHtmlObject(120, lowY + 6, 280, 20, answer, White, false, false);
+                answerNum++;
+                lowY -= 30;
+            }
+
+            AddButton(340, 390, 247, 248, 1, GumpButtonType.Reply, 0);
+
+            AddImageTiled(50, 29, 30, 390, 10460);
+            AddImageTiled(34, 140, 17, 279, 9263);
+
+            AddImage(48, 135, 10411);
+            AddImage(-16, 285, 10402);
+            AddImage(0, 10, 10421);
+            AddImage(25, 0, 10420);
+
+            AddImageTiled(83, 15, 350, 15, 10250);
+
+            AddImage(34, 419, 10306);
+            AddImage(442, 419, 10304);
+            AddImageTiled(51, 419, 392, 17, 10101);
+
+            AddImageTiled(415, 29, 44, 390, 2605);
+            AddImageTiled(415, 29, 30, 390, 10460);
+            AddImage(425, 0, 10441);
+
+            AddImage(370, 50, 1417);
+            AddImage(379, 60, 0x15A9);
+        }
+
+        public override void OnResponse(NetState sender, RelayInfo info)
+        {
+            if (info.ButtonID == 1)
+            {
+                for (int button = mAnswers.Length; button >= 0; button--)
+                {
+                    try
+                    {
+                        if (info.IsSwitched(button))
+                        {
+                            if (mAnswers[button] == mCorrectAnswer)
+                            {
+                                mObjective.CurProgress++;
+                            }
+                            else
+                            {
+                                mObjective.Fail();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+    }
+    static class Helper
+    {
+        static readonly Random rnd = new Random();
+
+        public static IList<T> Shuffle<T>(this IList<T> input)
+        {
+            for (var top = input.Count - 1; top > 1; --top)
+            {
+                var swap = rnd.Next(0, top);
+                T tmp = input[top];
+                input[top] = input[swap];
+                input[swap] = tmp;
+            }
+
+            return input;
         }
     }
 }
