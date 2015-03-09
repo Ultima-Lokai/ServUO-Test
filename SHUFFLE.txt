@@ -1,0 +1,29 @@
+static class Helper
+{
+    static readonly Random rnd = new Random();
+       
+    public static IList<T> Shuffle<T>(this IList<T> input)
+    {
+        for(var top = input.Count -1; top > 1; --top)
+        {
+            var swap = rnd.Next(0, top);
+            T tmp = input[top];
+            input[top] = input[swap];
+            input[swap] = tmp;
+        }
+    
+        return input;
+    }      
+    
+    public static IList<T> ShuffleCopy<T>(this IEnumerable<T> input)
+    {        return new List<T>(input).Shuffle();    }      
+    
+    public static void Print<T>(this IList<T> list)
+    {
+        foreach(T t in list)
+        {
+                Console.Write("{0}-", t);
+        }
+        Console.WriteLine();
+    }
+}
