@@ -4380,6 +4380,8 @@
     <Compile Include="Items\Weapons\Artifacts\RunedDriftwoodBow.cs" />
     <Compile Include="Items\Weapons\Artifacts\StaffOfResonance.cs" />
     <Compile Include="Items\Weapons\Artifacts\ValkyriesGlaive.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Core\QuestionScroll.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Core\QuestionAnswerGump.cs" />
     <Compile Include="Quests\HumilityCloakQuest\HumilityCloakQuest.cs" />
     <Compile Include="Quests\HumilityCloakQuest\HumilityShrineRegion.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Items\HumilityMarker.cs" />
@@ -4387,6 +4389,7 @@
     <Compile Include="Quests\HumilityCloakQuest\Items\PlainGreyCloak.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Items\ShieldOfRecognition.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Mobiles\Deirdre.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Mobiles\Gareth.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Mobiles\Jason.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Mobiles\Kevin.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Mobiles\Maribel.cs" />
