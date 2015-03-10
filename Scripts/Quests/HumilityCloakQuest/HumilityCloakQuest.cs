@@ -15,203 +15,37 @@ namespace Server.Engines.Quests
          * have a set of tasks prepared for one who would follow a truly Humble path. Art thou interested in joining our effort? */
         public override object Description { get { return 1075675; } }
 
-        /* Wonderful! First, let us see if thou art reading from the same roll of parchment as we are. *smiles* */
-        public override object Complete { get { return 1075676; } }
+        /* Very good! I can see that ye hath more than just a passing interest in our work. There are many trials before thee, but I have every hope 
+         * that ye shall have the diligence and fortitude to carry on to the very end. Before we begin, please prepare thyself by thinking about the 
+         * virtue of Humility. Ponder not only its symbols, but also its meanings. Once ye believe that thou art ready, speak with me again. */
+        public override object Complete { get { return 1075716; } }
+
+        /* Ah... no, that is not quite right. Truly, Humility is something that takes time and experience to understand. I wish to challenge thee to 
+         * seek out more knowledge concerning this virtue, and tomorrow let us speak again about what thou hast learned.<br> */
+        //public override object Uncomplete { get { return base.Uncomplete; } }
 
         /* I wish that thou wouldest reconsider. */
         public override object Refuse { get { return 1075677; } }
 
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA1); } }
-        public override bool DoneOnce { get { return true; } }
-
-        public override void OnAccept()
-        {
-            this.OnCompleted();
-        }
-
-        public override void OnRefuse()
-        {
-            base.OnRefuse();
-        }
+        public override Type NextQuest { get { return typeof(HumilityCloak1Quest); } }
+        public override bool DoneOnce { get { return false; } }
+        public override TimeSpan RestartDelay { get { return TimeSpan.FromDays(1.0); } }
 
         public HumilityCloakQuest()
         {
+            AddObjective(new AnswerObjective(1075678, new int[] { 1075679, 1075680, 1075681, 1075682 }, 1075679));
+            AddObjective(new AnswerObjective(1075683, new int[] { 1075684, 1075685, 1075686, 1075687 }, 1075685));
+            AddObjective(new AnswerObjective(1075688, new int[] { 1075689, 1075690, 1075691, 1075692 }, 1075691));
+            AddObjective(new AnswerObjective(1075693, new int[] { 1075694, 1075695, 1075696, 1075697 }, 1075697));
+            AddObjective(new AnswerObjective(1075698, new int[] { 1075699, 1075700, 1075701, 1075702 }, 1075700));
+            AddObjective(new AnswerObjective(1075703, new int[] { 1075704, 1075705, 1075706, 1075707 }, 1075705));
+            AddObjective(new AnswerObjective(1075708, new int[] { 1075709, 1075710, 1075711, 1075712 }, 1075709));
         }
 
-        public override void Serialize(GenericWriter writer)
+        public override void OnAccept()
         {
-            base.Serialize(writer);
-
-            writer.Write((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
-    }
-    public class HumilityCloakQuestQA1 : BaseQuest
-    {
-        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA2); } }
-        public override bool DoneOnce { get { return true; } }
-
-        public HumilityCloakQuestQA1()
-        {
-            AddObjective(new AnswerObjective(this, 1075678, new int[] { 1075679, 1075680, 1075681, 1075682 }, 1075679));
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
-    }
-    public class HumilityCloakQuestQA2 : BaseQuest
-    {
-        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA3); } }
-        public override bool DoneOnce { get { return true; } }
-
-        public HumilityCloakQuestQA2()
-        {
-            AddObjective(new AnswerObjective(this, 1075683, new int[] { 1075684, 1075685, 1075686, 1075687 }, 1075685));
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
-    }
-    public class HumilityCloakQuestQA3 : BaseQuest
-    {
-        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA4); } }
-        public override bool DoneOnce { get { return true; } }
-
-        public HumilityCloakQuestQA3()
-        {
-            AddObjective(new AnswerObjective(this, 1075688, new int[] { 1075689, 1075690, 1075691, 1075692 }, 1075691));
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
-    }
-    public class HumilityCloakQuestQA4 : BaseQuest
-    {
-        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA5); } }
-        public override bool DoneOnce { get { return true; } }
-
-        public HumilityCloakQuestQA4()
-        {
-            AddObjective(new AnswerObjective(this, 1075693, new int[] { 1075694, 1075695, 1075696, 1075697 }, 1075697));
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
-    }
-    public class HumilityCloakQuestQA5 : BaseQuest
-    {
-        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA6); } }
-        public override bool DoneOnce { get { return true; } }
-
-        public HumilityCloakQuestQA5()
-        {
-            AddObjective(new AnswerObjective(this, 1075698, new int[] { 1075699, 1075700, 1075701, 1075702 }, 1075700));
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
-    }
-    public class HumilityCloakQuestQA6 : BaseQuest
-    {
-        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloakQuestQA7); } }
-        public override bool DoneOnce { get { return true; } }
-
-        public HumilityCloakQuestQA6()
-        {
-            AddObjective(new AnswerObjective(this, 1075703, new int[] { 1075704, 1075705, 1075706, 1075707 }, 1075705));
-        }
-
-        public override void Serialize(GenericWriter writer)
-        {
-            base.Serialize(writer);
-
-            writer.Write((int)0); // version
-        }
-
-        public override void Deserialize(GenericReader reader)
-        {
-            base.Deserialize(reader);
-
-            int version = reader.ReadInt();
-        }
-    }
-    public class HumilityCloakQuestQA7 : BaseQuest
-    {
-        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloak1Quest); } }
-        public override bool DoneOnce { get { return true; } }
-
-        public HumilityCloakQuestQA7()
-        {
-            AddObjective(new AnswerObjective(this, 1075708, new int[] { 1075709, 1075710, 1075711, 1075712 }, 1075709));
+            Owner.SendLocalizedMessage(1075676);
         }
 
         public override void Serialize(GenericWriter writer)
@@ -561,7 +395,7 @@ namespace Server.Engines.Quests
         }
     }
 
-    public class AnswerObjective : BaseObjective
+    public class AnswerObjective : ObtainObjective
     {
         private string m_QuestionString;
         private int m_QuestionNumber;
@@ -577,7 +411,7 @@ namespace Server.Engines.Quests
         public string CorrectString { get { return m_CorrectString; } set { m_CorrectString = value; } }
         public int CorrectNumber { get { return m_CorrectNumber; } set { m_CorrectNumber = value; } }
 
-        public AnswerObjective(BaseQuest quest, int question, int[] answers, int correctAnswer)
+        public AnswerObjective(int question, int[] answers, int correctAnswer)
             : this(string.Empty, question, null, answers, string.Empty, correctAnswer)
         {
         }
@@ -588,7 +422,7 @@ namespace Server.Engines.Quests
         }
 
         public AnswerObjective(string questionString, int questionNumber, string[] answerStrings, int[] answerNumbers, string correctString, int correctNumber)
-            : base()
+            : base(typeof(AnswerObjective), "the correct answer to the question.", 1)
         {
             m_QuestionString = questionString;
             m_QuestionNumber = questionNumber;
@@ -603,11 +437,30 @@ namespace Server.Engines.Quests
             return false;
         }
 
+        public override void OnFailed()
+        {
+            this.Quest.Owner.SendLocalizedMessage(1075713);
+        }
+
+        public override void Fail()
+        {
+            this.Quest.Owner.SendLocalizedMessage(1075713);
+        }
+
         public override void OnAccept()
         {
             if (m_QuestionNumber == 0)
                 this.Quest.Owner.SendGump(new QuestionAnswerGump(this, m_QuestionString, m_AnswerStrings,
                     m_CorrectString));
+            else
+            {
+                object[] answers = new object[m_AnswerNumbers.Length];
+                for (int i = 0; i < m_AnswerNumbers.Length; i++)
+                {
+                    answers[i] = m_AnswerNumbers[i];
+                }
+                this.Quest.Owner.SendGump(new QuestionAnswerGump(this, (object)m_QuestionNumber, answers, (object)m_CorrectNumber));
+            }
         }
 
         public override void OnCompleted()
