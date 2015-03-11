@@ -1,20 +1,23 @@
 using System;
-using Server.Gumps;
 using Server.Items;
-using System.Collections;
-using Server.ContextMenus;
-using System.Collections.Generic;
-using Server;
 using Server.Network;
-using Server.Targeting;
-using Server.Misc;
-using Server.Engines.Quests;
+using Server.Mobiles;
 
-namespace Server.Mobiles
+namespace Server.Engines.Quests
 {
-    [CorpseName("a human's corpse")]
-    public class Walton : BaseCreature
+    public class Walton : MondainQuester
     {
+        public override Type[] Quests
+        {
+            get
+            {
+                return new Type[]
+                {
+                    typeof (HumilityCloakQuestFindTheHumble)
+                };
+            }
+        }
+
         private DateTime recoverDelay;
         private static bool m_Talked;  
 
@@ -32,20 +35,10 @@ namespace Server.Mobiles
 
         [Constructable]
         public Walton()
-            : base(AIType.AI_Animal, FightMode.None, 10, 1, 0.2, 0.4)
+            : base("Walton", "the horse trainer")
         {
-                Body = 0x190;
-                Name = "Walton";
-                Title = "the Horse Trainer";
-                Blessed = true;
-
-            AddItem(new Shirt(Utility.RandomNeutralHue()));
-            AddItem(new LongPants(Utility.RandomNeutralHue()));
-            AddItem(new HalfApron(Utility.RandomNeutralHue()));
+            Body = 0x190;
             AddItem(new Boots());
-
-            Utility.AssignRandomHair(this);
-            Hue = Utility.RandomSkinHue();
         }
 
         public override void OnMovement(Mobile m, Point3D oldLocation)

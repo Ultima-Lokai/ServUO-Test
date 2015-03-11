@@ -1,20 +1,23 @@
 using System;
-using Server.Gumps;
 using Server.Items;
-using System.Collections;
-using Server.ContextMenus;
-using System.Collections.Generic;
-using Server;
 using Server.Network;
-using Server.Targeting;
-using Server.Misc;
-using Server.Engines.Quests;
+using Server.Mobiles;
 
-namespace Server.Mobiles
+namespace Server.Engines.Quests
 {
-    [CorpseName("a human's corpse")]
-    public class Jason: BaseCreature
+    public class Jason : MondainQuester
     {
+        public override Type[] Quests
+        {
+            get
+            {
+                return new Type[]
+                {
+                    typeof (HumilityCloakQuestFindTheHumble)
+                };
+            }
+        }
+
         private DateTime recoverDelay;
         private static bool m_Talked;  
 
@@ -32,20 +35,11 @@ namespace Server.Mobiles
 
         [Constructable]
         public Jason()
-            : base(AIType.AI_Animal, FightMode.None, 10, 1, 0.2, 0.4)
+            : base("Jason", "the healer")
         {
-                Body = 0x190;
-                Name = "Jason";
-                Title = "the Butcher";
-                Blessed = true;
-
+            Body = 0x190;
             AddItem(new Robe(Utility.RandomNeutralHue()));
-            //AddItem(new ShortPants(Utility.RandomNeutralHue()));
-            //AddItem(new HalfApron(Utility.RandomNeutralHue()));
             AddItem(new Sandals());
-
-            Utility.AssignRandomHair(this);
-            Hue = Utility.RandomSkinHue();
         }
 
         public override void OnMovement(Mobile m, Point3D oldLocation)

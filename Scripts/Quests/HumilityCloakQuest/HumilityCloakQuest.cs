@@ -1,9 +1,24 @@
 using System;
+using System.Collections.Generic;
 using Server.Items;
 using Server.Mobiles;
 
 namespace Server.Engines.Quests
 {
+    public class QuestDesire
+    {
+        private Type m_DesireType;
+        private string m_Hint;
+
+        public Type DesireType { get { return m_DesireType; } }
+        public string Hint { get { return m_Hint; } }
+
+        public QuestDesire(Type desireType, string hint)
+        {
+            m_DesireType = desireType;
+            m_Hint = hint;
+        }
+    }
 
     public interface IQuestionAnswer
     {
@@ -31,13 +46,20 @@ namespace Server.Engines.Quests
         public override object Refuse { get { return 1075677; } }
 
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloak1Quest); } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestVesperMuseum); } }
         public override bool DoneOnce { get { return false; } }
         public override TimeSpan RestartDelay { get { return TimeSpan.FromDays(1.0); } }
 
         private readonly QuestionScroll[] m_Scrolls;
 
         public QuestionScroll[] Scrolls { get { return m_Scrolls; } }
+
+        private readonly List<QuestDesire> m_Desires = new List<QuestDesire>()
+        {
+            new QuestDesire(typeof(LeatherGloves),"way to keep my hands warm...something not too hard."),
+            new QuestDesire(typeof(PaintsAndBrush),"tool that helps me create something artistic."),
+            new QuestDesire(typeof(BoltOfCloth),"")
+        };
 
         public HumilityCloakQuest()
         {
@@ -104,10 +126,10 @@ namespace Server.Engines.Quests
             int version = reader.ReadInt();
         }
     }
-    public class HumilityCloak1Quest : BaseQuest
+    public class HumilityCloakQuestVesperMuseum : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloak2Quest); } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestMoongateZoo); } }
         public override bool DoneOnce { get { return true; } }
 
         /* Community Service - Museum */
@@ -129,7 +151,7 @@ namespace Server.Engines.Quests
          * that thine donation hath supported. */
         public override object Complete { get { return 1075721; } }
 
-        public HumilityCloak1Quest()
+        public HumilityCloakQuestVesperMuseum()
             : base()
         {
             AddObjective(new ObtainObjective(typeof(HumilityCrookReplica), "A Replica of the Shepherd's Crook of Humility", 1, 0x0E82));
@@ -150,10 +172,10 @@ namespace Server.Engines.Quests
         }
     }
 
-    public class HumilityCloak2Quest : BaseQuest
+    public class HumilityCloakQuestMoongateZoo : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloak3Quest); } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestBritainLibrary); } }
         public override bool DoneOnce { get { return true; } }
 
         /* Community Service – Zoo */
@@ -174,7 +196,7 @@ namespace Server.Engines.Quests
          * Thanks to thee, it can continue to thrive. */
         public override object Complete { get { return 1075727; } }
 
-        public HumilityCloak2Quest()
+        public HumilityCloakQuestMoongateZoo()
             : base()
         {
             AddObjective(new ObtainObjective(typeof(ForLifeBritanniaSash), "For the Life of Britannia Sash", 1, 0x1542));
@@ -195,10 +217,10 @@ namespace Server.Engines.Quests
         }
     }
 
-    public class HumilityCloak3Quest : BaseQuest
+    public class HumilityCloakQuestBritainLibrary : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloak4Quest); } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestFindTheHumble); } }
         public override bool DoneOnce { get { return true; } }
 
         /* Community Service – Library */
@@ -222,7 +244,7 @@ namespace Server.Engines.Quests
          * to thine community, beyond the obligations of this endeavor. */
         public override object Complete { get { return 1075733; } }
 
-        public HumilityCloak3Quest()
+        public HumilityCloakQuestBritainLibrary()
             : base()
         {
             AddObjective(new ObtainObjective(typeof(SpecialPrintingOfVirtue), "Special Printing of 'Virtue' by Lord British", 1, 0x0FEF));
@@ -244,10 +266,10 @@ namespace Server.Engines.Quests
         }
     }
 
-    public class HumilityCloak4Quest : BaseQuest
+    public class HumilityCloakQuestFindTheHumble : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloak5Quest); } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestGoldenShield); } }
         public override bool DoneOnce { get { return true; } }
 
         /* Who's Most Humble */
@@ -273,10 +295,10 @@ namespace Server.Engines.Quests
          * has something left to learn. *looks at the iron chain necklace* And it shows, does it not? */
         public override object Complete { get { return 1075773; } }
 
-        public HumilityCloak4Quest()
+        public HumilityCloakQuestFindTheHumble()
             : base()
         {
-            AddObjective(new ObtainObjective(typeof(IronChain), "Iron Chain", 1, 0x1085)); //1075788
+            AddObjective(new ObtainObjective(typeof(IronChain), "an item from the One who best exemplifies Humility.", 1, 0x1085)); //1075788
         }
 
         public override void OnAccept()
@@ -302,7 +324,7 @@ namespace Server.Engines.Quests
         }
     }
 
-    public class HumilityCloak5Quest : BaseQuest
+    public class HumilityCloakQuestGoldenShield : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
         public override bool DoneOnce { get { return true; } }
@@ -337,7 +359,7 @@ namespace Server.Engines.Quests
          * has something left to learn. *looks at the iron chain necklace* And it shows, does it not? */
         public override object Complete { get { return 1075773; } }
 
-        public HumilityCloak5Quest()
+        public HumilityCloakQuestGoldenShield()
             : base()
         {
             AddObjective(new ObtainObjective(typeof(PlainGreyCloak), "A Plain Grey Cloak", 1, 0x1085)); //1075789
@@ -345,14 +367,6 @@ namespace Server.Engines.Quests
 
             AddReward(new BaseReward(typeof(ShieldOfRecognition), 1075851)); // Shield of Recognition
         }
-
-       /* public override void OnAccept()
-        {
-            base.OnAccept();
-            Owner.SendLocalizedMessage(1075736);
-            Owner.AddToBackpack(new BrassRing());
-            Owner.AddToBackpack(new PlainGreyCloak());
-        }*/
 
         public override void Serialize(GenericWriter writer)
         {

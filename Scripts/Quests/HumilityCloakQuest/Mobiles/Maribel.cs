@@ -1,20 +1,23 @@
 using System;
-using Server.Gumps;
 using Server.Items;
-using System.Collections;
-using Server.ContextMenus;
-using System.Collections.Generic;
-using Server;
 using Server.Network;
-using Server.Targeting;
-using Server.Misc;
-using Server.Engines.Quests;
+using Server.Mobiles;
 
-namespace Server.Mobiles
+namespace Server.Engines.Quests
 {
-    [CorpseName("a human's corpse")]
-    public class Maribel : BaseCreature
+    public class Maribel : MondainQuester
     {
+        public override Type[] Quests
+        {
+            get
+            {
+                return new Type[]
+                {
+                    typeof (HumilityCloakQuestFindTheHumble)
+                };
+            }
+        }
+
         private DateTime recoverDelay;
         private static bool m_Talked;  
 
@@ -32,19 +35,10 @@ namespace Server.Mobiles
 
         [Constructable]
         public Maribel()
-            : base(AIType.AI_Animal, FightMode.None, 10, 1, 0.2, 0.4)
+            : base("Maribel", "the waitress")
         {
-                Body = 0x191;
-                Name = "Maribel";
-                Title = "the Waitress";
-                Blessed = true;
-
-            AddItem(new FancyDress(Utility.RandomNeutralHue()));
-            AddItem(new Shoes(Utility.RandomNeutralHue()));
-            //AddItem(new HalfApron(Utility.RandomNeutralHue()));
-
-            Utility.AssignRandomHair(this);
-            Hue = Utility.RandomSkinHue();
+            Body = 0x191;
+            AddItem(new HalfApron(Utility.RandomNeutralHue()));
         }
 
         public override void OnMovement(Mobile m, Point3D oldLocation)

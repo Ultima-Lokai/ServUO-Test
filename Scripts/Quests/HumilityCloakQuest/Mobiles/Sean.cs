@@ -1,20 +1,23 @@
 using System;
-using Server.Gumps;
 using Server.Items;
-using System.Collections;
-using Server.ContextMenus;
-using System.Collections.Generic;
-using Server;
 using Server.Network;
-using Server.Targeting;
-using Server.Misc;
-using Server.Engines.Quests;
+using Server.Mobiles;
 
-namespace Server.Mobiles
+namespace Server.Engines.Quests
 {
-    [CorpseName("a human's corpse")]
-    public class Sean: BaseCreature
+    public class Sean : MondainQuester
     {
+        public override Type[] Quests
+        {
+            get
+            {
+                return new Type[]
+                {
+                    typeof (HumilityCloakQuestFindTheHumble)
+                };
+            }
+        }
+
         private DateTime recoverDelay;
         private static bool m_Talked;  
 
@@ -30,20 +33,8 @@ namespace Server.Mobiles
 
         [Constructable]
         public Sean()
-            : base(AIType.AI_Animal, FightMode.None, 10, 1, 0.2, 0.4)
+            : base("Sean", "the blacksmith")
         {
-                Body = 0x190;
-                Name = "Sean";         
-                Title = "the Blacksmith";
-                Blessed = true;
-
-            AddItem(new Shirt(Utility.RandomNeutralHue()));
-            AddItem(new LongPants(Utility.RandomNeutralHue()));
-            AddItem(new FullApron(Utility.RandomNeutralHue()));
-            AddItem(new ThighBoots());
-
-            Utility.AssignRandomHair(this);
-            Hue = Utility.RandomSkinHue();
         }
 
         public override void OnMovement(Mobile m, Point3D oldLocation)
