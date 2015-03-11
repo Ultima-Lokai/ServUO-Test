@@ -51,34 +51,43 @@ namespace Server.Engines.Quests
                 new QuestionScroll(this, 5, 1075703, new int[] {1075704, 1075705, 1075706, 1075707}, 1075705),
                 new QuestionScroll(this, 6, 1075708, new int[] {1075709, 1075710, 1075711, 1075712}, 1075709)
             };
+            AddObjective(new AnswerObjective());
+            AddReward(new BaseReward("Virtue is its own reward."));
         }
 
         public void GiveNextQuestion(PlayerMobile from, int index)
         {
             QuestionScroll scroll = (QuestionScroll)Activator.CreateInstance(typeof(QuestionScroll));
-            QuestionScroll copy = Scrolls[index + 1];
+            QuestionScroll copy = Scrolls[index];
             scroll.Quest = copy.Quest;
             scroll.QuestionID = copy.QuestionID;
             scroll.QuestionString = copy.QuestionString;
             scroll.QuestionNumber = copy.QuestionNumber;
-            scroll.AnswerStrings = new string[copy.AnswerStrings.Length];
-            for (int i = 0; i < copy.AnswerStrings.Length; i++)
+            if (copy.AnswerStrings == null) scroll.AnswerStrings = null;
+            else
             {
-                scroll.AnswerStrings[i] = copy.AnswerStrings[i];
+                scroll.AnswerStrings = new string[copy.AnswerStrings.Length];
+                for (int i = 0; i < copy.AnswerStrings.Length; i++) { scroll.AnswerStrings[i] = copy.AnswerStrings[i]; }
             }
-            scroll.AnswerNumbers = new int[copy.AnswerNumbers.Length];
-            for (int i = 0; i < copy.AnswerNumbers.Length; i++)
+            if (copy.AnswerNumbers == null) scroll.AnswerNumbers = null;
+            else
             {
-                scroll.AnswerNumbers[i] = copy.AnswerNumbers[i];
+                scroll.AnswerNumbers = new int[copy.AnswerNumbers.Length];
+                for (int i = 0; i < copy.AnswerNumbers.Length; i++) { scroll.AnswerNumbers[i] = copy.AnswerNumbers[i]; }
             }
             scroll.AnswerNumbers = copy.AnswerNumbers;
             scroll.CorrectString = copy.CorrectString;
             scroll.CorrectNumber = copy.CorrectNumber;
+            scroll.BlessedFor = from;
+
+            if (!from.PlaceInBackpack(scroll))
+                from.Drop(scroll, from.Location);
         }
 
         public override void OnAccept()
         {
             Owner.SendLocalizedMessage(1075676);
+            GiveNextQuestion(Owner, 0);
         }
 
         public override void Serialize(GenericWriter writer)

@@ -37,19 +37,26 @@ namespace Server.Engines.Quests
         {
             if (m is PlayerMobile)
             {
-                PlayerMobile pm = (PlayerMobile) m;
+                PlayerMobile pm = (PlayerMobile)m;
                 Container pack = pm.Backpack;
                 if (pack != null && !pack.Deleted)
                 {
                     QuestionScroll answer = (QuestionScroll)pack.FindItemByType(typeof(QuestionScroll));
-                    if (answer.CorrectAnswerGiven)
-                    {
-                        if (answer.QuestionID < answer.Quest.Scrolls.Length - 1)
-                        {
-                            QuestionScroll scroll = (QuestionScroll)Activator.CreateInstance(typeof(QuestionScroll));
-                            QuestionScroll copy = answer.Quest.Scrolls[answer.QuestionID + 1];
-                        }
-                    }
+					if (answer != null)
+					{
+						if (answer.CorrectAnswerGiven)
+						{
+							if (answer.QuestionID < answer.Quest.Scrolls.Length - 1) answer.Quest.GiveNextQuestion(pm, answer.QuestionID + 1);
+							else ((HumilityCloakQuest)answer.Quest).OnCompleted();
+						}
+						else
+						{
+							pm.SendLocalizedMessage(1075713);
+							((HumilityCloakQuest)answer.Quest).RemoveQuest();
+						}
+						answer.Delete();
+						return;
+					}
                 }
             }
             base.OnDoubleClick(m);

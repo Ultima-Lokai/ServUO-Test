@@ -11,15 +11,20 @@ namespace Server.Engines.Quests
         private QuestionScroll mScroll;
         private object mQuestion;
         private object[] mAnswers;
-        private object mCorrectAnswer;
+        private int mCorrectAnswer;
+        private string mCorrectString;
 
         public QuestionAnswerGump(QuestionScroll scroll, object question, object[] answers, object correctAnswer)
             : base(75, 25)
         {
             mScroll = scroll;
             mQuestion = question;
+            mAnswers = new object[answers.Length];
             answers.Shuffle().CopyTo(mAnswers, 0);
-            mCorrectAnswer = correctAnswer;
+            if (correctAnswer is int)
+                mCorrectAnswer = (int)correctAnswer;
+            else
+                mCorrectString = (string)correctAnswer;
 
             int lowY = 385;
             int answerNum = 0;
@@ -35,9 +40,10 @@ namespace Server.Engines.Quests
             AddHtmlObject(130, 45, 270, 20, mQuestion, White, false, false); // Question
             AddImageTiled(130, 65, 175, 1, 9101);
 
+            AddGroup(1);
             foreach (object answer in mAnswers)
             {
-                AddRadio(85, lowY, 9720, 9723, true, answerNum);
+                AddRadio(85, lowY, 9720, 9723, false, answerNum);
                 AddHtmlObject(120, lowY + 6, 280, 20, answer, White, false, false);
                 answerNum++;
                 lowY -= 30;
@@ -77,9 +83,12 @@ namespace Server.Engines.Quests
                     {
                         if (info.IsSwitched(button))
                         {
-                            mScroll.CorrectAnswerGiven = (mAnswers[button] == mCorrectAnswer);
+                            if (mCorrectString == null)
+                                mScroll.CorrectAnswerGiven = ((int)mAnswers[button] == mCorrectAnswer);
+                            else
+                                mScroll.CorrectAnswerGiven = ((string)mAnswers[button] == mCorrectString);
                             mScroll.Name = "an answer scroll";
-                            mScroll.ItemID = 0x14EF;
+                            mScroll.ItemID = 0x14EE;
                             mScroll.InvalidateProperties();
                         }
                     }

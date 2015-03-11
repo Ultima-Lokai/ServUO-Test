@@ -1,6 +1,7 @@
 ﻿using System;
 using Server.Items;
 using Server.Mobiles;
+using System.Collections.Generic;
 
 namespace Server.Engines.Quests
 {
@@ -182,8 +183,19 @@ namespace Server.Engines.Quests
 
         public override void OnDoubleClick(Mobile from)
         {
+            if (ItemID == 0x14EE)
+            {
+                from.SendMessage("Show this to the one who gave it to you.");
+                return;
+            }
             Container pack = from.Backpack;
             if (!(from is PlayerMobile) || pack == null) return;
+
+            if(!IsChildOf(pack))
+            {
+                from.SendMessage("That must be in your pack for you to use it.");
+                return;
+            }
 
             if (m_QuestionNumber == 0)
                 from.SendGump(new QuestionAnswerGump(this, m_QuestionString, m_AnswerStrings,
@@ -204,6 +216,18 @@ namespace Server.Engines.Quests
             base.Serialize(writer);
 
             writer.Write((int)0); // version
+
+            // version 0
+            writer.Write((int)((BaseQuest)Quest).ChainID);
+            writer.Write((int)m_QuestionID);
+            writer.Write((string)m_QuestionString);
+            writer.Write((int)m_QuestionNumber);
+            writer.Write((int)m_AnswerStrings.Length);
+            foreach (string answer in m_AnswerStrings) writer.Write((string)answer);
+            writer.Write((int)m_AnswerNumbers.Length);
+            foreach (int answer in m_AnswerNumbers) writer.Write((int)answer);
+            writer.Write((string)m_CorrectString);
+            writer.Write((int)m_CorrectNumber);
         }
 
         public override void Deserialize(GenericReader reader)
@@ -211,67 +235,51 @@ namespace Server.Engines.Quests
             base.Deserialize(reader);
 
             int version = reader.ReadInt();
+
+            switch(version)
+            {
+                case 0:
+                    {
+                        int questChain = reader.ReadInt();
+                        List<BaseQuest> quests = ((PlayerMobile)BlessedFor).Quests;
+                        foreach (BaseQuest quest in quests)
+                        {
+                            if ((int)quest.ChainID == questChain)
+                            {
+                                m_Quest = (IQuestionAnswer)quest;
+                                break;
+                            }
+                        }
+                        m_QuestionID = reader.ReadInt();
+                        m_QuestionString = reader.ReadString();
+                        m_QuestionNumber = reader.ReadInt();
+
+                        int stringNum = reader.ReadInt();
+                        m_AnswerStrings = new string[stringNum];
+                        for (int i = 0; i < stringNum; i++)
+                            m_AnswerStrings[i] = reader.ReadString();
+                        int answerNum = reader.ReadInt();
+                        m_AnswerNumbers = new int[answerNum];
+                        for (int i = 0; i < stringNum; i++)
+                            m_AnswerNumbers[i] = reader.ReadInt();
+                        m_CorrectString = reader.ReadString();
+                        m_CorrectNumber = reader.ReadInt();
+                        break;
+                    }
+            }
         }
     }
 
     public class AnswerObjective : ObtainObjective
     {
-        private string m_QuestionString;
-        private int m_QuestionNumber;
-        private string[] m_AnswerStrings;
-        private int[] m_AnswerNumbers;
-        private string m_CorrectString;
-        private int m_CorrectNumber;
-
-        public string QuestionString { get { return m_QuestionString; } set { m_QuestionString = value; } }
-        public int QuestionNumber { get { return m_QuestionNumber; } set { m_QuestionNumber = value; } }
-        public string[] AnswerStrings { get { return m_AnswerStrings; } set { m_AnswerStrings = value; } }
-        public int[] AnswerNumbers { get { return m_AnswerNumbers; } set { m_AnswerNumbers = value; } }
-        public string CorrectString { get { return m_CorrectString; } set { m_CorrectString = value; } }
-        public int CorrectNumber { get { return m_CorrectNumber; } set { m_CorrectNumber = value; } }
-
-        public AnswerObjective(int question, int[] answers, int correctAnswer)
-            : this(string.Empty, question, null, answers, string.Empty, correctAnswer)
+        public AnswerObjective()
+            : base(typeof(AnswerObjective), "to answer the questions...", 1)
         {
-        }
-
-        public AnswerObjective(string question, string[] answers, string correctAnswer)
-            : this(question, 0, answers, null, correctAnswer, 0)
-        {
-        }
-
-        public AnswerObjective(string questionString, int questionNumber, string[] answerStrings, int[] answerNumbers, string correctString, int correctNumber)
-            : base(typeof(AnswerObjective), "the correct answer to the question.", 1)
-        {
-            m_QuestionString = questionString;
-            m_QuestionNumber = questionNumber;
-            m_AnswerStrings = answerStrings;
-            m_AnswerNumbers = answerNumbers;
-            m_CorrectString = correctString;
-            m_CorrectNumber = correctNumber;
-        }
-        public override bool Update(object obj)
-        {
-
-            return false;
         }
 
         public override void OnFailed()
         {
             this.Quest.Owner.SendLocalizedMessage(1075713);
-        }
-
-        public override void Fail()
-        {
-            this.Quest.Owner.SendLocalizedMessage(1075713);
-        }
-
-        public override void OnAccept()
-        {
-        }
-
-        public override void OnCompleted()
-        {
         }
 
         public override void Serialize(GenericWriter writer)
