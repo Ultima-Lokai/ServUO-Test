@@ -1,12 +1,11 @@
-using System;
+
 using Server.Items;
-using Server.Network;
-using Server.Mobiles;
 
 namespace Server.Engines.Quests
 {
-    public class Deirdre : MondainQuester
+    public class Deirdre : HumilityQuester
     {
+        public override int QuesterID { get { return 0; } }
         public override int GreetingMessage { get { return 1075744; } } // The cloak thou wearest looks warm.
         public override int ResponseMessage { get { return 1075745; } } // Good tidings to thee. I live on scraps in the shadow of Lord British's Castle. I am so close to nothing, that surely, thou canst not help but see I live a humble life.
         public override int HintMessage { get { return 1075746; } } // One ~1_desire~ wilt make my life so much nicer.
@@ -18,12 +17,21 @@ namespace Server.Engines.Quests
             : base("Deirdre", "the beggar")
         {
             Body = 0x191;
+            Female = true;
             AddItem(new PlainDress(Utility.RandomNeutralHue()));
+            Utility.AssignRandomHair(this);
+            Hue = Utility.RandomSkinHue();
+            FacialHairItemID = 0;
         }
 
         public Deirdre(Serial serial)
             : base(serial)
         {
+        }
+
+        public override bool GetGender()
+        {
+            return true;
         }
 
         public override void Serialize(GenericWriter writer)

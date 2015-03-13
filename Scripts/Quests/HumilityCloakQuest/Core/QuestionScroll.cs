@@ -222,10 +222,18 @@ namespace Server.Engines.Quests
             writer.Write((int)m_QuestionID);
             writer.Write((string)m_QuestionString);
             writer.Write((int)m_QuestionNumber);
-            writer.Write((int)m_AnswerStrings.Length);
-            foreach (string answer in m_AnswerStrings) writer.Write((string)answer);
-            writer.Write((int)m_AnswerNumbers.Length);
-            foreach (int answer in m_AnswerNumbers) writer.Write((int)answer);
+            if (m_AnswerStrings == null) writer.Write(0);
+            else
+            {
+                writer.Write((int) m_AnswerStrings.Length);
+                foreach (string answer in m_AnswerStrings) writer.Write((string) answer);
+            }
+            if (m_AnswerNumbers == null) writer.Write(0);
+            else
+            {
+                writer.Write((int) m_AnswerNumbers.Length);
+                foreach (int answer in m_AnswerNumbers) writer.Write((int) answer);
+            }
             writer.Write((string)m_CorrectString);
             writer.Write((int)m_CorrectNumber);
         }
@@ -255,13 +263,21 @@ namespace Server.Engines.Quests
                         m_QuestionNumber = reader.ReadInt();
 
                         int stringNum = reader.ReadInt();
-                        m_AnswerStrings = new string[stringNum];
-                        for (int i = 0; i < stringNum; i++)
-                            m_AnswerStrings[i] = reader.ReadString();
+                        if (stringNum == 0) m_AnswerStrings = null;
+                        else
+                        {
+                            m_AnswerStrings = new string[stringNum];
+                            for (int i = 0; i < stringNum; i++)
+                                m_AnswerStrings[i] = reader.ReadString();
+                        }
                         int answerNum = reader.ReadInt();
-                        m_AnswerNumbers = new int[answerNum];
-                        for (int i = 0; i < stringNum; i++)
-                            m_AnswerNumbers[i] = reader.ReadInt();
+                        if (answerNum == 0) m_AnswerNumbers = null;
+                        else
+                        {
+                            m_AnswerNumbers = new int[answerNum];
+                            for (int i = 0; i < stringNum; i++)
+                                m_AnswerNumbers[i] = reader.ReadInt();
+                        }
                         m_CorrectString = reader.ReadString();
                         m_CorrectNumber = reader.ReadInt();
                         break;

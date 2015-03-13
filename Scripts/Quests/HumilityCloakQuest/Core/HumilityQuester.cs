@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using Server.Mobiles;
 using Server.Gumps;
+using Server.Items;
 using Server.Network;
 
 namespace Server.Engines.Quests
 {
+
     public abstract class HumilityQuester : MondainQuester
     {
         public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestFindTheHumble) }; } }
 
+        public virtual int QuesterID { get { return -1; } }
         public virtual int GreetingMessage { get { return 0; } }
         public virtual int ResponseMessage { get { return 0; } }
         public virtual int HintMessage { get { return 0; } }
         public virtual int TradeMessage { get { return 0; } }
         public virtual int ThanksMessage { get { return 0; } }
+
 
         public HumilityQuester()
             : base(null)
@@ -27,14 +31,16 @@ namespace Server.Engines.Quests
         }
 
         public HumilityQuester(string name, string title)
-            : base(title)
+            : base(name, title)
         {
-            this.Name = name;
-            this.SpeechHue = 0x3B2;
         }
 
         public HumilityQuester(Serial serial)
             : base(serial)
+        {
+        }
+
+        public override void InitBody()
         {
         }
 
@@ -43,69 +49,68 @@ namespace Server.Engines.Quests
             AddNameProperties(list);
         }
 
+        public override bool PropertyTitle
+        {
+            get { return true; }
+        }
+
+        public override void OnMovement(Mobile m, Point3D oldLocation)
+        {
+            PlainGreyCloak cloak = (PlainGreyCloak) m.FindItemOnLayer(Layer.Cloak);
+            if (m.Player && cloak != null)
+                cloak.Interact(this, QuesterID, "greet");
+        }
+
+        public void OnGumpClose(Mobile m)
+        {
+            PlainGreyCloak cloak = (PlainGreyCloak)m.FindItemOnLayer(Layer.Cloak);
+            if (m.Player && cloak != null && Utility.Random(20) > 14)
+            {
+                if (Utility.RandomBool())
+                    cloak.Interact(this, QuesterID, "hint");
+                else
+                    cloak.Interact(this, QuesterID, "trade");
+            }
+        }
+
         public override bool OnDragDrop(Mobile from, Item dropped)
         {
-            Mobile m = from;
-            PlayerMobile mobile = m as PlayerMobile;
+            PlayerMobile mobile = from as PlayerMobile;
+            if (mobile != null)
             {
-                if (dropped is FriendshipMug)
+                PlainGreyCloak cloak = (PlainGreyCloak)mobile.FindItemOnLayer(Layer.Cloak);
+                if (cloak != null)
                 {
-                    dropped.Delete();
-                    mobile.AddToBackpack(new PairOfWorkGloves()); //1075780
-                    this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "Ah, ‘tis a perfect mug. Please take this pair of gloves in trade.", mobile.NetState);
-                    from.SendMessage("For your good deed you are awarded a little karma.");
-                    from.Karma += 50;
-                    return true;
+                    Type desireType = cloak.Desires[QuesterID].DesireType;
+                    Type offerType = cloak.Desires[QuesterID].OfferType;
 
-                }
-                else if (dropped.LootType == LootType.Blessed || dropped.LootType == LootType.Newbied || dropped.Insured)
-                {
-                    from.SendMessage("You cannot offer blessed, newbied, or insured items");
-                    return false;
-                }
-                else
-                {
-                    this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "I have no need for this...", mobile.NetState);
+                    if (dropped.GetType() == desireType)
+                    {
+                        dropped.Delete();
+                        Item item = (Item) Activator.CreateInstance(offerType);
+                        mobile.AddToBackpack(item);
+                        SayTo(mobile, ThanksMessage,
+                            cloak.Desires[QuesterID].DesireName + "\t" + cloak.Desires[QuesterID].OfferName);
+                        return true;
+
+                    }
+                    else
+                    {
+                        mobile.SendGump(new HumilityQuesterGump(this));
+                        PrivateOverheadMessage(MessageType.Regular, 1153, false, "I have no need of this...",
+                            mobile.NetState);
+                    }
                 }
             }
-            return false;
+            return base.OnDragDrop(from, dropped);
         }
 
         public override void OnTalk(PlayerMobile player)
         {
-            if (QuestHelper.DeliveryArrived(player, this))
-                return;
-
-            if (QuestHelper.InProgress(player, this))
-                return;
-
-            if (QuestHelper.QuestLimitReached(player))
-                return;
-
-            // check if this quester can offer any quest chain (already started)
-            foreach (KeyValuePair<QuestChain, BaseChain> pair in player.Chains)
+            PlainGreyCloak cloak = (PlainGreyCloak)player.FindItemOnLayer(Layer.Cloak);
+            if (cloak != null)
             {
-                BaseChain chain = pair.Value;
-
-                if (chain != null && chain.Quester != null && chain.Quester == this.GetType())
-                {
-                    BaseQuest quest = QuestHelper.RandomQuest(player, new Type[] { chain.CurrentQuest }, this);
-
-                    if (quest != null)
-                    {
-                        player.CloseGump(typeof(MondainQuestGump));
-                        player.SendGump(new MondainQuestGump(quest));
-                        return;
-                    }
-                }
-            }
-
-            BaseQuest questt = QuestHelper.RandomQuest(player, this.Quests, this);
-
-            if (questt != null)
-            {
-                player.CloseGump(typeof(MondainQuestGump));
-                player.SendGump(new MondainQuestGump(questt));
+                player.SendGump(new HumilityQuesterGump(this));
             }
         }
 
@@ -126,10 +131,14 @@ namespace Server.Engines.Quests
 
     public class HumilityQuesterGump : BaseQuestGump
     {
-        public HumilityQuesterGump(HumilityQuester quester, int response)
+        private HumilityQuester mQuester;
+        public HumilityQuesterGump(HumilityQuester quester)
             : base(75, 25)
         {
+            mQuester = quester;
             string name = quester.Name + " " + quester.Title;
+            int response = quester.ResponseMessage;
+
             Closable = true;
 
             AddPage(0);
@@ -169,7 +178,9 @@ namespace Server.Engines.Quests
 
         public override void OnResponse(NetState sender, RelayInfo info)
         {
-            base.OnResponse(sender, info);
+            Mobile from = sender.Mobile;
+            if (from != null && !from.Deleted)
+                mQuester.OnGumpClose(from);
         }
     }
 }

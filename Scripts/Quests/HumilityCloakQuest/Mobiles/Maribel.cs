@@ -1,12 +1,11 @@
-using System;
+
 using Server.Items;
-using Server.Network;
-using Server.Mobiles;
 
 namespace Server.Engines.Quests
 {
-    public class Maribel : MondainQuester
+    public class Maribel : HumilityQuester
     {
+        public override int QuesterID { get { return 3; } }
         public override int GreetingMessage { get { return 1075754; } } // You, in the grey cloak, art thou hungry?
         public override int ResponseMessage { get { return 1075755; } } // I feedeth any who come here with the means to pay.  Be they noblemen or commoners, peaceful or aggressive, artist or barbarian, tis not my place to judge. I believeth there is value in everyone, and thus serve all.
         public override int HintMessage { get { return 1075756; } } // All that I wilt ask for, is a ~1_desire~.
@@ -19,12 +18,25 @@ namespace Server.Engines.Quests
             : base("Maribel", "the waitress")
         {
             Body = 0x191;
+            Female = true;
+            AddItem(new FancyShirt(Utility.RandomNeutralHue()));
+            AddItem(new Skirt(Utility.RandomNeutralHue()));
+            AddItem(new Shoes(Utility.RandomNeutralHue()));
             AddItem(new HalfApron(Utility.RandomNeutralHue()));
+
+            Utility.AssignRandomHair(this);
+            Hue = Utility.RandomSkinHue();
+            FacialHairItemID = 0;
         }
 
         public Maribel(Serial serial)
             : base(serial)
         {
+        }
+
+        public override bool GetGender()
+        {
+            return true;
         }
 
         public override void Serialize(GenericWriter writer)

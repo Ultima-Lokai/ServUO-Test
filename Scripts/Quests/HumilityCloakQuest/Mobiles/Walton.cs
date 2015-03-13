@@ -1,12 +1,11 @@
-using System;
+
 using Server.Items;
-using Server.Network;
-using Server.Mobiles;
 
 namespace Server.Engines.Quests
 {
-    public class Walton : MondainQuester
+    public class Walton : HumilityQuester
     {
+        public override int QuesterID { get { return 5; } }
         public override int GreetingMessage { get { return 1075739; } } // A horse blanket would offer more comfort than thine cloak, mayhaps.
         public override int ResponseMessage { get { return 1075740; } } // Hello friend. Yes, I work with yon horses each day. I carry bails of hay, feed, and even shovel manure for those beautiful beasts of burden. Everyone who rideth my animals enjoy their temperament and health. Yet, I do not ask for any recognition.
         public override int HintMessage { get { return 1075741; } } // All I need is but a simple ~1_desire~.
@@ -18,7 +17,15 @@ namespace Server.Engines.Quests
             : base("Walton", "the horse trainer")
         {
             Body = 0x190;
-            AddItem(new Boots());
+            Female = false;
+            AddItem(new Shirt(Utility.RandomNeutralHue()));
+            AddItem(new LongPants(Utility.RandomNeutralHue()));
+            AddItem(new BodySash(Utility.RandomNeutralHue()));
+            AddItem(new ThighBoots());
+
+            Utility.AssignRandomHair(this);
+            Utility.AssignRandomFacialHair(this);
+            Hue = Utility.RandomSkinHue();
         }
 
         public Walton(Serial serial)

@@ -5,20 +5,6 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests
 {
-    public class QuestDesire
-    {
-        private Type m_DesireType;
-        private string m_Hint;
-
-        public Type DesireType { get { return m_DesireType; } }
-        public string Hint { get { return m_Hint; } }
-
-        public QuestDesire(Type desireType, string hint)
-        {
-            m_DesireType = desireType;
-            m_Hint = hint;
-        }
-    }
 
     public interface IQuestionAnswer
     {
@@ -54,17 +40,6 @@ namespace Server.Engines.Quests
 
         public QuestionScroll[] Scrolls { get { return m_Scrolls; } }
 
-        private readonly List<QuestDesire> m_Desires = new List<QuestDesire>()
-        {
-            new QuestDesire(typeof(SeasonedSkillet),"skillet that's already been seasoned"),
-            new QuestDesire(typeof(VillageCauldron),"cauldron from a nearby village"),
-            new QuestDesire(typeof(ShortStool),"short stool to sit on"),
-            new QuestDesire(typeof(FriendshipMug),"mug of friendship"),
-            new QuestDesire(typeof(BrassRing),"ring made of brass"),
-            new QuestDesire(typeof(WornHammer),"well used hammer"),
-            new QuestDesire(typeof(PairOfWorkGloves),"sturdy pair of work gloves")
-        };
-
         public HumilityCloakQuest()
         {
             m_Scrolls = new QuestionScroll[]
@@ -79,6 +54,11 @@ namespace Server.Engines.Quests
             };
             AddObjective(new AnswerObjective());
             AddReward(new BaseReward("Virtue is its own reward."));
+        }
+
+        public override void OnCompleted()
+        {
+            base.OnCompleted();
         }
 
         public void GiveNextQuestion(PlayerMobile from, int index)
@@ -130,7 +110,13 @@ namespace Server.Engines.Quests
 
             int version = reader.ReadInt();
         }
-    }
+    } 
+    
+    /* Very good! I can see that ye hath more than just a passing interest in our work. There are many trials before thee, 
+       * but I have every hope that ye shall have the diligence and fortitude to carry on to the very end. Before we begin, 
+       * please prepare thyself by thinking about the virtue of Humility. 
+       * Ponder not only its symbols, but also its meanings. Once ye believe that thou art ready, speak with me again. */
+
     public class HumilityCloakQuestVesperMuseum : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
