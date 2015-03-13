@@ -4380,6 +4380,7 @@
     <Compile Include="Items\Weapons\Artifacts\RunedDriftwoodBow.cs" />
     <Compile Include="Items\Weapons\Artifacts\StaffOfResonance.cs" />
     <Compile Include="Items\Weapons\Artifacts\ValkyriesGlaive.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Core\HumilityQuester.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Core\QuestionScroll.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Core\QuestionAnswerGump.cs" />
     <Compile Include="Quests\HumilityCloakQuest\HumilityCloakQuest.cs" />

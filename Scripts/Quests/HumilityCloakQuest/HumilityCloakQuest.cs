@@ -56,9 +56,13 @@ namespace Server.Engines.Quests
 
         private readonly List<QuestDesire> m_Desires = new List<QuestDesire>()
         {
-            new QuestDesire(typeof(LeatherGloves),"way to keep my hands warm...something not too hard."),
-            new QuestDesire(typeof(PaintsAndBrush),"tool that helps me create something artistic."),
-            new QuestDesire(typeof(BoltOfCloth),"")
+            new QuestDesire(typeof(SeasonedSkillet),"skillet that's already been seasoned"),
+            new QuestDesire(typeof(VillageCauldron),"cauldron from a nearby village"),
+            new QuestDesire(typeof(ShortStool),"short stool to sit on"),
+            new QuestDesire(typeof(FriendshipMug),"mug of friendship"),
+            new QuestDesire(typeof(BrassRing),"ring made of brass"),
+            new QuestDesire(typeof(WornHammer),"well used hammer"),
+            new QuestDesire(typeof(PairOfWorkGloves),"sturdy pair of work gloves")
         };
 
         public HumilityCloakQuest()
@@ -100,6 +104,7 @@ namespace Server.Engines.Quests
             scroll.AnswerNumbers = copy.AnswerNumbers;
             scroll.CorrectString = copy.CorrectString;
             scroll.CorrectNumber = copy.CorrectNumber;
+            scroll.LootType = LootType.Blessed;
             scroll.BlessedFor = from;
 
             if (!from.PlaceInBackpack(scroll))

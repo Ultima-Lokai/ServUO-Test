@@ -7,31 +7,12 @@ namespace Server.Engines.Quests
 {
     public class Maribel : MondainQuester
     {
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[]
-                {
-                    typeof (HumilityCloakQuestFindTheHumble)
-                };
-            }
-        }
+        public override int GreetingMessage { get { return 1075754; } } // You, in the grey cloak, art thou hungry?
+        public override int ResponseMessage { get { return 1075755; } } // I feedeth any who come here with the means to pay.  Be they noblemen or commoners, peaceful or aggressive, artist or barbarian, tis not my place to judge. I believeth there is value in everyone, and thus serve all.
+        public override int HintMessage { get { return 1075756; } } // All that I wilt ask for, is a ~1_desire~.
+        public override int TradeMessage { get { return 1075757; } } // This ~1_gift~ was given to me and I cannot use it. I wilt happily trade it for the right item.
+        public override int ThanksMessage { get { return 1075758; } } // Thanks to thee! This ~1_desire~ is just right. Here, this ~2_gift~ is for thee. 
 
-        private DateTime recoverDelay;
-        private static bool m_Talked;  
-
-        string[] Maribelsay = new string[] // things to say while greeting 
-		      { 
-
-			 "You, in the grey cloak, art thou hungry?", //1075754
-
-             "I feedeth any who come here with the means to pay.  Be they noblemen or commoners, peaceful or aggressive, artist or barbarian, tis not my place to judge. I believeth there is value in everyone, and thus serve all.",//1075755
-
-             "All that I wilt ask for, is a hammer.",//All that I wilt ask for, is a ~1_desire~. 1075756
-
-             "This skillet was given to me and I cannot use it. I wilt happily trade it for the right item.",//This ~1_gift~ was given to me and I cannot use it. I wilt happily trade it for the right item. 1075757
-		};
 
         [Constructable]
         public Maribel()
@@ -39,44 +20,6 @@ namespace Server.Engines.Quests
         {
             Body = 0x191;
             AddItem(new HalfApron(Utility.RandomNeutralHue()));
-        }
-
-        public override void OnMovement(Mobile m, Point3D oldLocation)
-        {
-            if (m_Talked == false)
-            {
-
-                if (m.Player && m.FindItemOnLayer(Layer.Cloak) is PlainGreyCloak)
-
-                if (m.InRange(this, 4))
-                {
-                    m_Talked = true;
-                    SayRandom(Maribelsay, this);
-                    this.Move(GetDirectionTo(m.Location));
-                 
-                    SpamTimer t = new SpamTimer();
-                    t.Start();
-                }
-            }
-        }
-
-        private class SpamTimer : Timer
-        {
-            public SpamTimer()
-                : base(TimeSpan.FromSeconds(10))
-            {
-                Priority = TimerPriority.OneSecond;
-            }
-
-            protected override void OnTick()
-            {
-                m_Talked = false;
-            }
-        }
-
-        private static void SayRandom(string[] say, Mobile m)
-        {
-            m.Say(say[Utility.Random(say.Length)]);
         }
 
         public Maribel(Serial serial)
@@ -95,36 +38,8 @@ namespace Server.Engines.Quests
             base.Deserialize(reader);
             int version = reader.ReadInt();
         }
-
-        public override bool OnDragDrop(Mobile from, Item dropped)
-        {  
-            Mobile m = from;
-            PlayerMobile mobile = m as PlayerMobile;
-            {
-                if (dropped is WornHammer) 
-                {
-                    dropped.Delete();
-                    mobile.AddToBackpack(new SeasonedSkillet()); //1075774
-                    this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "Thanks to thee! This hammer is just right. Here, this skillet is for thee.", mobile.NetState);//Thanks to thee! This ~1_desire~ is just right. Here, this ~2_gift~ is for thee. 1075758
-                    from.SendMessage("For your good deed you are awarded a little karma.");
-                    from.Karma += 50;
-                    return true;    
-
-                        }
-                        else if (dropped.LootType == LootType.Blessed || dropped.LootType == LootType.Newbied || dropped.Insured)
-                        {
-                            from.SendMessage("You cannot offer blessed, newbied, or insured items");
-                            return false;
-                        }
-                        else
-                        {
-                            this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "I have no need for this...", mobile.NetState);
-                        }
-                    }
-                    return false;
-                }
-            }
-        }
+    }
+}
     
 
 

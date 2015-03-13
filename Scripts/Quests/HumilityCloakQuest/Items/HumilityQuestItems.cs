@@ -17,31 +17,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075774; //Seasoned Skillet
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestFindTheHumble) }; } }
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
+        public override int LabelNumber { get { return 1075774; } } // Seasoned Skillet
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -70,31 +49,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075775; //Village Cauldron
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestFindTheHumble) }; } }
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
+        public override int LabelNumber { get { return 1075775; } } // Village Cauldron
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -123,31 +81,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075776; //Short Stool
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestFindTheHumble) }; } }
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
+        public override int LabelNumber { get { return 1075776; } } // Short Stool
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -176,31 +113,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075777; //Friendship Mug
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestFindTheHumble) }; } }
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
+        public override int LabelNumber { get { return 1075777; } } // Friendship Mug
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -229,31 +145,16 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestFindTheHumble) }; } }
+
+        public override int LabelNumber { get { return 1075778; } } // Brass Ring 
+
+        public override bool OnEquip(Mobile from)
         {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075778; //Brass Ring
-            }
+            from.SendLocalizedMessage(1075896); // The brass ring seems to be too small to slip onto your finger.
+            return false;
         }
 
-       /* public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }*/
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -282,31 +183,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075779; //Worn Hammer
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestFindTheHumble) }; } }
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
+        public override int LabelNumber { get { return 1075779; } } // Worn Hammer
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -335,31 +215,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075780; //Pair of Work Gloves
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestFindTheHumble) }; } }
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
+        public override int LabelNumber { get { return 1075780; } } // Pair of Work Gloves
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -388,31 +247,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075788; //Iron Chain
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestFindTheHumble) }; } }
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
+        public override int LabelNumber { get { return 1075788; } } // Iron Chain
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -442,31 +280,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075791; //A Replica of the Shepherd's Crook of Humility
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestVesperMuseum) }; } }
+        
+        public override int LabelNumber { get { return 1075791; } } // A Replica of the Shepherd's Crook of Humility
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -496,31 +313,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075792; //For the Life of Britannia Sash
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestMoongateZoo) }; } }
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
+        public override int LabelNumber { get { return 1075792; } } // For the Life of Britannia Sash
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -550,31 +346,10 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests
-        {
-            get
-            {
-                return new Type[] 
-                {
-                    typeof(HumilityCloakQuest)
-                };
-            }
-        }
-        public override int LabelNumber
-        {
-            get
-            {
-                return 1075793; //Special Printing of 'Virtue' by Lord British
-            }
-        }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestBritainLibrary) }; } }
 
-        public override int Lifespan
-        {
-            get
-            {
-                return 600;
-            }
-        }
+        public override int LabelNumber { get { return 1075793; } } // Special Printing of 'Virtue' by Lord British
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
