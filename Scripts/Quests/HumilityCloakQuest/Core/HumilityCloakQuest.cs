@@ -1,5 +1,5 @@
+
 using System;
-using System.Collections.Generic;
 using Server.Items;
 using Server.Mobiles;
 
@@ -36,7 +36,7 @@ namespace Server.Engines.Quests
         public override bool DoneOnce { get { return false; } }
         public override TimeSpan RestartDelay { get { return TimeSpan.FromDays(1.0); } }
 
-        private readonly QuestionScroll[] m_Scrolls;
+        private QuestionScroll[] m_Scrolls;
 
         public QuestionScroll[] Scrolls { get { return m_Scrolls; } }
 
@@ -54,11 +54,6 @@ namespace Server.Engines.Quests
             };
             AddObjective(new AnswerObjective());
             AddReward(new BaseReward("Virtue is its own reward."));
-        }
-
-        public override void OnCompleted()
-        {
-            base.OnCompleted();
         }
 
         public void GiveNextQuestion(PlayerMobile from, int index)
@@ -93,8 +88,28 @@ namespace Server.Engines.Quests
 
         public override void OnAccept()
         {
+            Owner.AddToBackpack(new HumilityMarker());
             Owner.SendLocalizedMessage(1075676);
             GiveNextQuestion(Owner, 0);
+        }
+
+        public override void GiveRewards()
+        {
+            Container pack = Owner.Backpack;
+            if (pack == null)
+            {
+                pack = new Backpack();
+                Owner.EquipItem(pack);
+            }
+            HumilityMarker marker =
+                (HumilityMarker)pack.FindItemByType(typeof(HumilityMarker));
+            if (marker == null)
+            {
+                marker = new HumilityMarker();
+                Owner.AddToBackpack(marker);
+            }
+            marker.Status = "vesper";
+            base.GiveRewards();
         }
 
         public override void Serialize(GenericWriter writer)
@@ -109,13 +124,19 @@ namespace Server.Engines.Quests
             base.Deserialize(reader);
 
             int version = reader.ReadInt();
+
+            m_Scrolls = new QuestionScroll[]
+            {
+                new QuestionScroll(this, 0, 1075678, new int[] {1075679, 1075680, 1075681, 1075682}, 1075679),
+                new QuestionScroll(this, 1, 1075683, new int[] {1075684, 1075685, 1075686, 1075687}, 1075685),
+                new QuestionScroll(this, 2, 1075688, new int[] {1075689, 1075690, 1075691, 1075692}, 1075691),
+                new QuestionScroll(this, 3, 1075693, new int[] {1075694, 1075695, 1075696, 1075697}, 1075697),
+                new QuestionScroll(this, 4, 1075698, new int[] {1075699, 1075700, 1075701, 1075702}, 1075700),
+                new QuestionScroll(this, 5, 1075703, new int[] {1075704, 1075705, 1075706, 1075707}, 1075705),
+                new QuestionScroll(this, 6, 1075708, new int[] {1075709, 1075710, 1075711, 1075712}, 1075709)
+            };
         }
-    } 
-    
-    /* Very good! I can see that ye hath more than just a passing interest in our work. There are many trials before thee, 
-       * but I have every hope that ye shall have the diligence and fortitude to carry on to the very end. Before we begin, 
-       * please prepare thyself by thinking about the virtue of Humility. 
-       * Ponder not only its symbols, but also its meanings. Once ye believe that thou art ready, speak with me again. */
+    }
 
     public class HumilityCloakQuestVesperMuseum : BaseQuest
     {
@@ -295,7 +316,7 @@ namespace Server.Engines.Quests
         public override void OnAccept()
         {
             base.OnAccept();
-            Owner.SendLocalizedMessage(1075736);
+            Owner.SendGump(new HumilityQuesterGump(this.StartingMobile, 1075736));
             Owner.AddToBackpack(new BrassRing());
             Owner.AddToBackpack(new PlainGreyCloak(Owner));
         }

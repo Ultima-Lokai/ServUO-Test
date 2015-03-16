@@ -124,6 +124,7 @@ namespace Server.Items
                             m_Desires[questerID].HintTime = DateTime.UtcNow;
                             break;
                         case "trade":
+                            if (questerID == 6) break; // Sean does not give information about the iron chain
                             humble.SayTo(m_QuestOwner, humble.TradeMessage, m_Desires[questerID].OfferName);
                             m_Desires[questerID].Traded = true;
                             m_Desires[questerID].TradeTime = DateTime.UtcNow;
@@ -182,34 +183,6 @@ namespace Server.Items
                 }
             from.SendMessage("You have no reason to wear this plain grey cloak.");
             return false;
-        }
-
-        public override void OnDoubleClick(Mobile from)
-        {
-            PlainGreyCloak cloak = from.FindItemOnLayer(Layer.Cloak) as PlainGreyCloak;
-
-            if (Parent != from)
-            {
-                from.SendMessage("You must equip the cloak to perform this action.");
-            }
-            else
-            {
-                Item HumilityMarker = from.Backpack.FindItemByType(typeof(HumilityMarker));
-                if (HumilityMarker != null && from.Region.IsPartOf(typeof(Regions.HumilityShrineRegion)) && from.Meditating)
-                {
-                    if (from.AddToBackpack(new HumilityCloak()))
-                    {
-                        HumilityMarker.Delete();
-
-                        from.PlaySound(0x1F7);
-                        from.FixedParticles(0x376A, 9, 32, 5030, EffectLayer.Waist);
-
-                        from.SendLocalizedMessage(1075897); // As you near the shrine a strange energy envelops you. Suddenly, your cloak is transformed into the Cloak of Humility!
-
-                        Delete();
-                    }
-                }
-            }
         }
 
         public override void Serialize(GenericWriter writer)

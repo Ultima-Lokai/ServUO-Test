@@ -1,6 +1,5 @@
 
 using System;
-using Server.Items;
 
 namespace Server.Items 
 {
@@ -8,9 +7,18 @@ namespace Server.Items
     {
         private DateTime m_DecayTime;
         private Timer m_Timer;
+        private string m_Status;
+
+        [CommandProperty(AccessLevel.GameMaster)]
+        public string Status { get { return m_Status; } set { m_Status = value; } }
+
+        public HumilityMarker()
+            : this("new")
+        {
+        }
 
         [Constructable]
-        public HumilityMarker()
+        public HumilityMarker(string status)
             : base(0x176B)
         {
             Weight = 0;
@@ -19,8 +27,9 @@ namespace Server.Items
             LootType = LootType.Blessed;
             Movable = false;
             Visible = false;
+            m_Status = status;
 
-            m_DecayTime = DateTime.Now + TimeSpan.FromDays(1);
+            m_DecayTime = DateTime.Now + TimeSpan.FromDays(7);
 
             m_Timer = new InternalTimer(this, m_DecayTime);
             m_Timer.Start();
@@ -45,6 +54,8 @@ namespace Server.Items
             writer.Write((int)0);
 
             writer.WriteDeltaTime(m_DecayTime);
+
+            writer.Write(m_Status);
         }
 
         public override void Deserialize(GenericReader reader)
@@ -55,6 +66,8 @@ namespace Server.Items
             m_DecayTime = reader.ReadDeltaTime();
             m_Timer = new InternalTimer(this, m_DecayTime);
             m_Timer.Start();
+
+            m_Status = reader.ReadString();
 
         }
 

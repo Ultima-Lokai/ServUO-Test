@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Server.Items;
 using Server.Mobiles;
 
@@ -72,7 +73,32 @@ namespace Server.Engines.Quests
 					IronChain chain = (IronChain)pack.FindItemByType(typeof(IronChain));
 					if (chain != null)
 					{
-						// I will fill this if needed.
+                        try
+                        {
+                            List<BaseQuest> quests = pm.Quests;
+                            foreach (BaseQuest quest in quests)
+                            {
+                                if (quest is HumilityCloakQuestFindTheHumble)
+                                {
+                                    PlainGreyCloak cloak = (PlainGreyCloak)pack.FindItemByType(typeof(PlainGreyCloak));
+                                    if (cloak != null)
+                                    {
+                                        HumilityMarker marker =
+                                            (HumilityMarker) pack.FindItemByType(typeof (HumilityMarker));
+                                        if (marker == null)
+                                        {
+                                            marker = new HumilityMarker();
+                                            pm.AddToBackpack(marker);
+                                        }
+                                        marker.Status = "testing";
+                                        pm.SendGump(new HumilityRewardGump(this, marker, cloak, chain));
+                                    }
+                                    else
+                                        SayTo(pm, "Speak to me when you have the cloak in your pack also.");
+                                }
+                            }
+                        }
+                        catch { }
 					}
                 }
             }

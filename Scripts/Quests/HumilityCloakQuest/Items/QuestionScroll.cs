@@ -134,7 +134,6 @@ namespace Server.Engines.Quests
             set { m_AnswerStrings = value; }
         }
 
-        [CommandProperty(AccessLevel.GameMaster)]
         public int[] AnswerNumbers { get { return m_AnswerNumbers; } set { m_AnswerNumbers = value; } }
 
         [CommandProperty(AccessLevel.GameMaster)]
@@ -199,7 +198,7 @@ namespace Server.Engines.Quests
 
             if (m_QuestionNumber == 0)
                 from.SendGump(new QuestionAnswerGump(this, m_QuestionString, m_AnswerStrings,
-                    m_CorrectString));
+                    m_CorrectString, "Question - Answer"));
             else
             {
                 object[] answers = new object[m_AnswerNumbers.Length];
@@ -207,7 +206,7 @@ namespace Server.Engines.Quests
                 {
                     answers[i] = m_AnswerNumbers[i];
                 }
-                from.SendGump(new QuestionAnswerGump(this, (object)m_QuestionNumber, answers, (object)m_CorrectNumber));
+                from.SendGump(new QuestionAnswerGump(this, (object)m_QuestionNumber, answers, (object)m_CorrectNumber, "Question - Answer"));
             }
         }
 

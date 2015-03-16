@@ -4381,11 +4381,13 @@
     <Compile Include="Items\Weapons\Artifacts\StaffOfResonance.cs" />
     <Compile Include="Items\Weapons\Artifacts\ValkyriesGlaive.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Core\HumilityQuester.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Gumps\HumilityQuesterGump.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Gumps\HumilityRewardGump.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Core\QuestDesire.cs" />
-    <Compile Include="Quests\HumilityCloakQuest\Core\QuestionScroll.cs" />
-    <Compile Include="Quests\HumilityCloakQuest\Core\QuestionAnswerGump.cs" />
-    <Compile Include="Quests\HumilityCloakQuest\HumilityCloakQuest.cs" />
-    <Compile Include="Quests\HumilityCloakQuest\HumilityShrineRegion.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Items\QuestionScroll.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Gumps\QuestionAnswerGump.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Core\HumilityCloakQuest.cs" />
+    <Compile Include="Quests\HumilityCloakQuest\Core\HumilityShrineRegion.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Items\HumilityMarker.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Items\HumilityQuestItems.cs" />
     <Compile Include="Quests\HumilityCloakQuest\Items\PlainGreyCloak.cs" />

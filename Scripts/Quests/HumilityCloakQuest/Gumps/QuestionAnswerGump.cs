@@ -14,7 +14,7 @@ namespace Server.Engines.Quests
         private int mCorrectAnswer;
         private string mCorrectString;
 
-        public QuestionAnswerGump(QuestionScroll scroll, object question, object[] answers, object correctAnswer)
+        public QuestionAnswerGump(QuestionScroll scroll, object question, object[] answers, object correctAnswer, string title)
             : base(75, 25)
         {
             mScroll = scroll;
@@ -37,17 +37,18 @@ namespace Server.Engines.Quests
             AddAlphaRegion(50, 20, 400, 400);
 
             AddImage(90, 33, 9005);
-            AddHtmlObject(130, 45, 270, 20, mQuestion, White, false, false); // Question
+            AddHtmlObject(130, 45, 270, 20, title, White, false, false); // Title
             AddImageTiled(130, 65, 175, 1, 9101);
 
             AddGroup(1);
             foreach (object answer in mAnswers)
             {
                 AddRadio(85, lowY, 9720, 9723, false, answerNum);
-                AddHtmlObject(120, lowY + 6, 280, 20, answer, White, false, false);
+                AddHtmlObject(120, lowY + 6, 280, 20, answer, White, false, false); // Answers
                 answerNum++;
                 lowY -= 30;
             }
+            AddHtmlObject(85, lowY - 44, 280, 40, mQuestion, White, false, false); // Question
 
             AddButton(340, 390, 247, 248, 1, GumpButtonType.Reply, 0);
 

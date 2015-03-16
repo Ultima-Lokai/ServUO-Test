@@ -1,7 +1,5 @@
 
 using Server.Items;
-using Server.Network;
-using Server.Mobiles;
 
 namespace Server.Engines.Quests
 {
@@ -45,35 +43,6 @@ namespace Server.Engines.Quests
             base.Deserialize(reader);
             int version = reader.ReadInt();
         }
-
-        /* public override bool OnDragDrop(Mobile from, Item dropped)
-        {
-            Mobile m = from;
-            PlayerMobile mobile = m as PlayerMobile;
-            {
-                if (dropped is ShortStool)
-                {
-                    dropped.Delete();
-                    mobile.AddToBackpack(new IronChain());//1075788
-                    mobile.AddToBackpack(new HumilityMarker());
-                    this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "Wonderul!  A stool!  Surely thou hast gone through much trouble to bring this for me. Please take this iron chain that I made for Gareth. ‘Tis something we once talked of for some time, and he had suggested a new method of metalworking that I have only just accomplished.", mobile.NetState);
-                    from.SendMessage("For your good deed you are awarded a little karma.");
-                    from.Karma += 50;
-                    return true;
-
-                }
-                else if (dropped.LootType == LootType.Blessed || dropped.LootType == LootType.Newbied || dropped.Insured)
-                {
-                    from.SendMessage("You cannot offer blessed, newbied, or insured items");
-                    return false;
-                }
-                else
-                {
-                    this.PrivateOverheadMessage(MessageType.Regular, 1153, false, "I have no need for this...", mobile.NetState);
-                }
-            }
-            return false;
-        } */
     }
 }
     
