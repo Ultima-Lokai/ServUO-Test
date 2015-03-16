@@ -9,16 +9,10 @@ namespace Server.Items
     {
         private Mobile m_QuestOwner;
         private QuestDesire[] m_Desires;
-        private List<Type> m_Offers;
-        private List<Type> m_Wants;
 
         [CommandProperty(AccessLevel.GameMaster)]
         public Mobile QuestOwner { get { return m_QuestOwner; } set { m_QuestOwner = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public List<Type> Offers { get { return m_Offers; } }
-        public List<Type> Wants { get { return m_Wants; } }
-
+        
         public QuestDesire[] Desires
         {
             get { return m_Desires; }
@@ -48,19 +42,16 @@ namespace Server.Items
 
             m_Offers.Shuffle();
             m_Offers.Add(typeof(IronChain));
+            m_Offers.CopyTo(m_Wants);
 
-            m_Wants = new List<Type>
-            {
-                typeof (SeasonedSkillet), typeof (VillageCauldron), typeof (ShortStool), typeof (FriendshipMug),
-                typeof (WornHammer), typeof (PairOfWorkGloves)
-            };
-
-            m_Wants.Shuffle();
-            m_Wants.Add(typeof(BrassRing));
+            m_Wants[6] = typeof(BrassRing);
 
             AssignTypes();
 
         }
+
+        private Type[] m_Wants = new Type[7];
+        private List<Type> m_Offers;
 
         private void AssignTypes()
         {
@@ -68,43 +59,48 @@ namespace Server.Items
 
             foreach(Type type in m_Offers)
             {
-                if (type.ToString().ToLower().Contains("skillet")) offerStrings.Add("skillet");
-                if (type.ToString().ToLower().Contains("cauldron")) offerStrings.Add("cauldron");
-                if (type.ToString().ToLower().Contains("stool")) offerStrings.Add("stool");
-                if (type.ToString().ToLower().Contains("mug")) offerStrings.Add("mug");
-                if (type.ToString().ToLower().Contains("hammer")) offerStrings.Add("hammer");
-                if (type.ToString().ToLower().Contains("gloves")) offerStrings.Add("gloves");
-                if (type.ToString().ToLower().Contains("chain")) offerStrings.Add("chain");
+                if (type == typeof(SeasonedSkillet)) offerStrings.Add("skillet");
+                if (type == typeof(VillageCauldron)) offerStrings.Add("cauldron");
+                if (type == typeof(ShortStool)) offerStrings.Add("stool");
+                if (type == typeof(FriendshipMug)) offerStrings.Add("mug");
+                if (type == typeof(WornHammer)) offerStrings.Add("hammer");
+                if (type == typeof(PairOfWorkGloves)) offerStrings.Add("pair of gloves");
+                if (type == typeof(IronChain)) offerStrings.Add("chain");
             }
 
             List<string> wantStrings = new List<string>();
             
             foreach(Type type in m_Wants)
             {
-                if (type.ToString().ToLower().Contains("skillet")) wantStrings.Add("skillet");
-                if (type.ToString().ToLower().Contains("cauldron")) wantStrings.Add("cauldron");
-                if (type.ToString().ToLower().Contains("stool")) wantStrings.Add("stool");
-                if (type.ToString().ToLower().Contains("mug")) wantStrings.Add("mug");
-                if (type.ToString().ToLower().Contains("hammer")) wantStrings.Add("hammer");
-                if (type.ToString().ToLower().Contains("gloves")) wantStrings.Add("gloves");
-                if (type.ToString().ToLower().Contains("ring")) wantStrings.Add("ring");
+                if (type == typeof(SeasonedSkillet)) wantStrings.Add("skillet");
+                if (type == typeof(VillageCauldron)) wantStrings.Add("cauldron");
+                if (type == typeof(ShortStool)) wantStrings.Add("stool");
+                if (type == typeof(FriendshipMug)) wantStrings.Add("mug");
+                if (type == typeof(WornHammer)) wantStrings.Add("hammer");
+                if (type == typeof(PairOfWorkGloves)) wantStrings.Add("pair of gloves");
+                if (type == typeof(BrassRing)) wantStrings.Add("ring");
             }
 
-            List<int> tempInts = new List<int>() {0, 1, 2, 3, 4, 5, 6};
+            List<int> tempInts = new List<int>() { 0, 1, 2, 3, 4, 5 };
+            List<int> tempWantInts = new List<int>() { 0, 1, 2, 3, 4, 5 };
 
-            int questerID = 6;
-            int wantID;
+            int questerID = 6; // Sean goes first
+            int wantID = Utility.Random(6); // He wants something random (not the ring)
+            m_Desires[questerID] = new QuestDesire(questerID, m_Wants[wantID], wantStrings[wantID],
+                m_Offers[questerID], offerStrings[questerID]);
+            tempWantInts.Remove(wantID); // Remove what Sean wants from the want-list
 
-            for (int i = 6; i > 1; i--)
+            for (int i = 0; i < 5; i++)
             {
-                wantID = Utility.Random(6);
+                questerID = wantID; // Now we find out who supplies what Sean wants
+                wantID = tempWantInts[Utility.Random(tempWantInts.Count)]; // Then we find out what that person wants, and so on.
                 m_Desires[questerID] = new QuestDesire(questerID, m_Wants[wantID], wantStrings[wantID],
                     m_Offers[questerID], offerStrings[questerID]);
-                tempInts.Remove(questerID);
-                questerID = tempInts[Utility.Random(tempInts.Count)];
+                tempInts.Remove(questerID); // Remove each questerID ...
+                tempWantInts.Remove(wantID); // and each wantID from their lists ...
             }
-            questerID = tempInts[0];
-            wantID = 6;
+            questerID = tempInts[0]; // Until there is only one person left, and that person ...
+            wantID = 6; // wants the brass ring.
             m_Desires[questerID] = new QuestDesire(questerID, m_Wants[wantID], wantStrings[wantID],
                 m_Offers[questerID], offerStrings[questerID]);
         }
@@ -123,17 +119,17 @@ namespace Server.Items
                             m_Desires[questerID].GreetTime = DateTime.UtcNow;
                             break;
                         case "hint":
-                            humble.SayTo(m_QuestOwner, humble.HintMessage);
+                            humble.SayTo(m_QuestOwner, humble.HintMessage, m_Desires[questerID].DesireName);
                             m_Desires[questerID].Hinted = true;
                             m_Desires[questerID].HintTime = DateTime.UtcNow;
                             break;
                         case "trade":
-                            humble.SayTo(m_QuestOwner, humble.TradeMessage);
+                            humble.SayTo(m_QuestOwner, humble.TradeMessage, m_Desires[questerID].OfferName);
                             m_Desires[questerID].Traded = true;
                             m_Desires[questerID].TradeTime = DateTime.UtcNow;
                             break;
                         case "thank":
-                            humble.SayTo(m_QuestOwner, humble.ThanksMessage);
+                            humble.SayTo(m_QuestOwner, humble.ThanksMessage, string.Format("{0}/t{1}", m_Desires[questerID].DesireName, m_Desires[questerID].OfferName));
                             m_Desires[questerID].Thanked = true;
                             m_Desires[questerID].ThankTime = DateTime.UtcNow;
                             break;
@@ -153,16 +149,16 @@ namespace Server.Items
                 {
                     case "greet":
                         return (!m_Desires[questerID].Greeted ||
-                                m_Desires[questerID].GreetTime < DateTime.UtcNow + TimeSpan.FromMinutes(2.0));
+                                m_Desires[questerID].GreetTime < DateTime.UtcNow - TimeSpan.FromMinutes(2.0));
                     case "hint":
                         return (!m_Desires[questerID].Hinted ||
-                                m_Desires[questerID].HintTime < DateTime.UtcNow + TimeSpan.FromMinutes(7.0));
+                                m_Desires[questerID].HintTime < DateTime.UtcNow - TimeSpan.FromMinutes(5.0));
                     case "trade":
                         return (!m_Desires[questerID].Traded ||
-                                m_Desires[questerID].TradeTime < DateTime.UtcNow + TimeSpan.FromMinutes(12.0));
+                                m_Desires[questerID].TradeTime < DateTime.UtcNow - TimeSpan.FromMinutes(12.0));
                     case "thank":
                         return (!m_Desires[questerID].Thanked ||
-                                m_Desires[questerID].ThankTime < DateTime.UtcNow + TimeSpan.FromMinutes(15.0));
+                                m_Desires[questerID].ThankTime < DateTime.UtcNow - TimeSpan.FromMinutes(15.0));
                 }
             }
             catch { }
@@ -226,15 +222,19 @@ namespace Server.Items
 
             foreach (QuestDesire desire in m_Desires)
             {
-                writer.Write(desire.QuesterID);
-                writer.Write(desire.DesireType.ToString());
-                writer.Write(desire.DesireName);
-                writer.Write(desire.OfferType.ToString());
-                writer.Write(desire.OfferName);
-                writer.Write(desire.Greeted);
-                writer.Write(desire.Hinted);
-                writer.Write(desire.Traded);
-                writer.Write(desire.Thanked);
+                try
+                {
+                    writer.Write(desire.QuesterID);
+                    writer.Write(desire.DesireType.ToString());
+                    writer.Write(desire.DesireName);
+                    writer.Write(desire.OfferType.ToString());
+                    writer.Write(desire.OfferName);
+                    writer.Write(desire.Greeted);
+                    writer.Write(desire.Hinted);
+                    writer.Write(desire.Traded);
+                    writer.Write(desire.Thanked);
+                }
+                catch { }
             }
         }
 

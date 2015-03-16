@@ -64,7 +64,7 @@ namespace Server.Engines.Quests
         public void OnGumpClose(Mobile m)
         {
             PlainGreyCloak cloak = (PlainGreyCloak)m.FindItemOnLayer(Layer.Cloak);
-            if (m.Player && cloak != null && Utility.Random(20) > 14)
+            if (m.Player && cloak != null && Utility.Random(20) > 12)
             {
                 if (Utility.RandomBool())
                     cloak.Interact(this, QuesterID, "hint");
@@ -89,8 +89,16 @@ namespace Server.Engines.Quests
                         dropped.Delete();
                         Item item = (Item) Activator.CreateInstance(offerType);
                         mobile.AddToBackpack(item);
-                        SayTo(mobile, ThanksMessage,
-                            cloak.Desires[QuesterID].DesireName + "\t" + cloak.Desires[QuesterID].OfferName);
+						if (this is Sean)
+						{
+							mobile.AddToBackpack(new HumilityMarker());
+							SayTo(mobile, ThanksMessage, cloak.Desires[QuesterID].DesireName);
+							mobile.AddToBackpack(cloak);
+                            // BaseQuest quest = (BaseQuest)mobile.Quests.Find(typeof(HumilityCloakQuestFindTheHumble));
+						}
+						else
+							SayTo(mobile, ThanksMessage,
+								cloak.Desires[QuesterID].DesireName + "\t" + cloak.Desires[QuesterID].OfferName);
                         return true;
 
                     }

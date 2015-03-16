@@ -33,6 +33,9 @@ namespace Server.Engines.Quests
         {
         }
 
+        private string[] goodWords = new string[] { "Good. Now try this one...", "Hmm...let me give you another question.", "Good answer. How about this one?", 
+            "That's right. Try another...", "Let's see if you know this one.", "What do you think of this one?", "OK. Now how would answer this?" };
+
         public override void OnDoubleClick(Mobile m)
         {
             if (m is PlayerMobile)
@@ -44,18 +47,32 @@ namespace Server.Engines.Quests
                     QuestionScroll answer = (QuestionScroll)pack.FindItemByType(typeof(QuestionScroll));
 					if (answer != null)
 					{
-						if (answer.CorrectAnswerGiven)
-						{
-							if (answer.QuestionID < answer.Quest.Scrolls.Length - 1) answer.Quest.GiveNextQuestion(pm, answer.QuestionID + 1);
-							else ((HumilityCloakQuest)answer.Quest).OnCompleted();
-						}
-						else
-						{
-							pm.SendLocalizedMessage(1075713);
-							((HumilityCloakQuest)answer.Quest).RemoveQuest();
-						}
-						answer.Delete();
-						return;
+                        if (answer.ItemID == 0x14EE)
+                        {
+                            if (answer.CorrectAnswerGiven)
+                            {
+                                if (answer.QuestionID < answer.Quest.Scrolls.Length - 1)
+                                {
+                                    pm.SendMessage(goodWords[Utility.Random(goodWords.Length)]);
+                                    answer.Quest.GiveNextQuestion(pm, answer.QuestionID + 1);
+                                }
+                                else ((HumilityCloakQuest)answer.Quest).GiveRewards();
+                            }
+                            else
+                            {
+                                pm.SendLocalizedMessage(1075713);
+                                ((HumilityCloakQuest)answer.Quest).RemoveQuest();
+                            }
+                            answer.Delete();
+                            return;
+                        }
+                        else
+                            SayTo(pm, "Try to answer the question before speaking to me again.");
+					}
+					IronChain chain = (IronChain)pack.FindItemByType(typeof(IronChain));
+					if (chain != null)
+					{
+						// I will fill this if needed.
 					}
                 }
             }

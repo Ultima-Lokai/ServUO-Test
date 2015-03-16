@@ -46,7 +46,7 @@ namespace Server.Engines.Quests
             int version = reader.ReadInt();
         }
 
-        public override bool OnDragDrop(Mobile from, Item dropped)
+        /* public override bool OnDragDrop(Mobile from, Item dropped)
         {
             Mobile m = from;
             PlayerMobile mobile = m as PlayerMobile;
@@ -73,7 +73,7 @@ namespace Server.Engines.Quests
                 }
             }
             return false;
-        }
+        } */
     }
 }
     

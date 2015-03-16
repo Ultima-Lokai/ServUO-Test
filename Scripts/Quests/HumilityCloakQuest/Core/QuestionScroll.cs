@@ -249,15 +249,19 @@ namespace Server.Engines.Quests
                 case 0:
                     {
                         int questChain = reader.ReadInt();
-                        List<BaseQuest> quests = ((PlayerMobile)BlessedFor).Quests;
-                        foreach (BaseQuest quest in quests)
+                        try
                         {
-                            if ((int)quest.ChainID == questChain)
+                            List<BaseQuest> quests = ((PlayerMobile)BlessedFor).Quests;
+                            foreach (BaseQuest quest in quests)
                             {
-                                m_Quest = (IQuestionAnswer)quest;
-                                break;
+                                if ((int)quest.ChainID == questChain)
+                                {
+                                    m_Quest = (IQuestionAnswer)quest;
+                                    break;
+                                }
                             }
                         }
+                        catch { m_Quest = new HumilityCloakQuest(); } // temporary fix
                         m_QuestionID = reader.ReadInt();
                         m_QuestionString = reader.ReadString();
                         m_QuestionNumber = reader.ReadInt();
@@ -275,7 +279,7 @@ namespace Server.Engines.Quests
                         else
                         {
                             m_AnswerNumbers = new int[answerNum];
-                            for (int i = 0; i < stringNum; i++)
+                            for (int i = 0; i < answerNum; i++)
                                 m_AnswerNumbers[i] = reader.ReadInt();
                         }
                         m_CorrectString = reader.ReadString();

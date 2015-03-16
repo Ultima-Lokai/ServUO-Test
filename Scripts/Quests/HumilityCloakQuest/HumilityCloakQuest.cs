@@ -289,7 +289,7 @@ namespace Server.Engines.Quests
         public HumilityCloakQuestFindTheHumble()
             : base()
         {
-            AddObjective(new ObtainObjective(typeof(IronChain), "an item from the One who best exemplifies Humility.", 1, 0x1085)); //1075788
+            AddObjective(new ObtainObjective(typeof(IronChain), "an item from one who best exemplifies Humility.", 1, 0x1085)); //1075788
         }
 
         public override void OnAccept()
@@ -297,7 +297,7 @@ namespace Server.Engines.Quests
             base.OnAccept();
             Owner.SendLocalizedMessage(1075736);
             Owner.AddToBackpack(new BrassRing());
-            Owner.AddToBackpack(new PlainGreyCloak());
+            Owner.AddToBackpack(new PlainGreyCloak(Owner));
         }
 
         public override void Serialize(GenericWriter writer)
