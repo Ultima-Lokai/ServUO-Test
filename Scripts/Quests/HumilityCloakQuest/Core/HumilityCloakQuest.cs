@@ -8,7 +8,7 @@ namespace Server.Engines.Quests
 
     public interface IQuestionAnswer
     {
-        QuestionScroll[] Scrolls { get; }
+        int[][] ScrollValues { get; }
         void GiveNextQuestion(PlayerMobile from, int index);
     }
     
@@ -36,49 +36,37 @@ namespace Server.Engines.Quests
         public override bool DoneOnce { get { return false; } }
         public override TimeSpan RestartDelay { get { return TimeSpan.FromDays(1.0); } }
 
-        private QuestionScroll[] m_Scrolls;
+        private int[][] m_ScrollValues = new int[][]
+        {
+            new int[] {1075679, 1075680, 1075681, 1075682},
+            new int[] {1075684, 1075685, 1075686, 1075687}, 
+            new int[] {1075689, 1075690, 1075691, 1075692},
+            new int[] {1075694, 1075695, 1075696, 1075697},
+            new int[] {1075699, 1075700, 1075701, 1075702},
+            new int[] {1075704, 1075705, 1075706, 1075707},
+            new int[] {1075709, 1075710, 1075711, 1075712}
+        };
 
-        public QuestionScroll[] Scrolls { get { return m_Scrolls; } }
+        private int[] m_Questions = new int[] { 1075678, 1075683, 1075688, 1075693, 1075698, 1075703, 1075708 };
+
+        private int[] m_Answers = new int[] {1075679, 1075685, 1075691, 1075697, 1075700, 1075705, 1075709};
+
+        public int[][] ScrollValues { get { return m_ScrollValues; } }
+
+        public int[] Questions { get { return m_Questions; } }
+
+        public int[] Answers { get { return m_Answers; } }
 
         public HumilityCloakQuest()
         {
-            m_Scrolls = new QuestionScroll[]
-            {
-                new QuestionScroll(this, 0, 1075678, new int[] {1075679, 1075680, 1075681, 1075682}, 1075679),
-                new QuestionScroll(this, 1, 1075683, new int[] {1075684, 1075685, 1075686, 1075687}, 1075685),
-                new QuestionScroll(this, 2, 1075688, new int[] {1075689, 1075690, 1075691, 1075692}, 1075691),
-                new QuestionScroll(this, 3, 1075693, new int[] {1075694, 1075695, 1075696, 1075697}, 1075697),
-                new QuestionScroll(this, 4, 1075698, new int[] {1075699, 1075700, 1075701, 1075702}, 1075700),
-                new QuestionScroll(this, 5, 1075703, new int[] {1075704, 1075705, 1075706, 1075707}, 1075705),
-                new QuestionScroll(this, 6, 1075708, new int[] {1075709, 1075710, 1075711, 1075712}, 1075709)
-            };
             AddObjective(new AnswerObjective());
             AddReward(new BaseReward("Virtue is its own reward."));
         }
 
         public void GiveNextQuestion(PlayerMobile from, int index)
         {
-            QuestionScroll scroll = (QuestionScroll)Activator.CreateInstance(typeof(QuestionScroll));
-            QuestionScroll copy = Scrolls[index];
-            scroll.Quest = copy.Quest;
-            scroll.QuestionID = copy.QuestionID;
-            scroll.QuestionString = copy.QuestionString;
-            scroll.QuestionNumber = copy.QuestionNumber;
-            if (copy.AnswerStrings == null) scroll.AnswerStrings = null;
-            else
-            {
-                scroll.AnswerStrings = new string[copy.AnswerStrings.Length];
-                for (int i = 0; i < copy.AnswerStrings.Length; i++) { scroll.AnswerStrings[i] = copy.AnswerStrings[i]; }
-            }
-            if (copy.AnswerNumbers == null) scroll.AnswerNumbers = null;
-            else
-            {
-                scroll.AnswerNumbers = new int[copy.AnswerNumbers.Length];
-                for (int i = 0; i < copy.AnswerNumbers.Length; i++) { scroll.AnswerNumbers[i] = copy.AnswerNumbers[i]; }
-            }
-            scroll.AnswerNumbers = copy.AnswerNumbers;
-            scroll.CorrectString = copy.CorrectString;
-            scroll.CorrectNumber = copy.CorrectNumber;
+            QuestionScroll scroll = new QuestionScroll(this, index, Questions[index], ScrollValues[index],
+                Answers[index]);
             scroll.LootType = LootType.Blessed;
             scroll.BlessedFor = from;
 
@@ -124,17 +112,6 @@ namespace Server.Engines.Quests
             base.Deserialize(reader);
 
             int version = reader.ReadInt();
-
-            m_Scrolls = new QuestionScroll[]
-            {
-                new QuestionScroll(this, 0, 1075678, new int[] {1075679, 1075680, 1075681, 1075682}, 1075679),
-                new QuestionScroll(this, 1, 1075683, new int[] {1075684, 1075685, 1075686, 1075687}, 1075685),
-                new QuestionScroll(this, 2, 1075688, new int[] {1075689, 1075690, 1075691, 1075692}, 1075691),
-                new QuestionScroll(this, 3, 1075693, new int[] {1075694, 1075695, 1075696, 1075697}, 1075697),
-                new QuestionScroll(this, 4, 1075698, new int[] {1075699, 1075700, 1075701, 1075702}, 1075700),
-                new QuestionScroll(this, 5, 1075703, new int[] {1075704, 1075705, 1075706, 1075707}, 1075705),
-                new QuestionScroll(this, 6, 1075708, new int[] {1075709, 1075710, 1075711, 1075712}, 1075709)
-            };
         }
     }
 
@@ -281,7 +258,7 @@ namespace Server.Engines.Quests
     public class HumilityCloakQuestFindTheHumble : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloakQuestGoldenShield); } }
+        //public override Type NextQuest { get { return typeof(HumilityCloakQuestGoldenShield); } }
         public override bool DoneOnce { get { return true; } }
 
         /* Who's Most Humble */

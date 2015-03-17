@@ -17,6 +17,12 @@ namespace Server.Items
         {
         }
 
+        public override void AddNameProperties(ObjectPropertyList list)
+        {
+            list.Add("Status: {0}", m_Status);
+            base.AddNameProperties(list);
+        }
+
         [Constructable]
         public HumilityMarker(string status)
             : base(0x176B)

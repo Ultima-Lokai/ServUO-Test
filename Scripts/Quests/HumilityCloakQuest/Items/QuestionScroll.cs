@@ -214,10 +214,13 @@ namespace Server.Engines.Quests
         {
             base.Serialize(writer);
 
-            writer.Write((int)0); // version
+            writer.Write((int)1); // version
+
+            // version 1
+            writer.Write((bool)m_CorrectAnswerGiven);
+            writer.WriteMobile(BlessedFor);
 
             // version 0
-            writer.Write((int)((BaseQuest)Quest).ChainID);
             writer.Write((int)m_QuestionID);
             writer.Write((string)m_QuestionString);
             writer.Write((int)m_QuestionNumber);
@@ -243,48 +246,58 @@ namespace Server.Engines.Quests
 
             int version = reader.ReadInt();
 
-            switch(version)
-            {
-                case 0:
-                    {
-                        int questChain = reader.ReadInt();
-                        try
-                        {
-                            List<BaseQuest> quests = ((PlayerMobile)BlessedFor).Quests;
-                            foreach (BaseQuest quest in quests)
-                            {
-                                if ((int)quest.ChainID == questChain)
-                                {
-                                    m_Quest = (IQuestionAnswer)quest;
-                                    break;
-                                }
-                            }
-                        }
-                        catch { m_Quest = new HumilityCloakQuest(); } // temporary fix
-                        m_QuestionID = reader.ReadInt();
-                        m_QuestionString = reader.ReadString();
-                        m_QuestionNumber = reader.ReadInt();
+            Mobile questMobile = BlessedFor;
 
-                        int stringNum = reader.ReadInt();
-                        if (stringNum == 0) m_AnswerStrings = null;
-                        else
+            switch (version)
+            {
+                case 1:
+                {
+                    m_CorrectAnswerGiven = reader.ReadBool();
+                    questMobile = reader.ReadMobile();
+                    goto case 0;
+                }
+                case 0:
+                {
+                    try
+                    {
+                        BaseQuest basequest = QuestHelper.RandomQuest(((PlayerMobile)questMobile),
+                            new Type[] {typeof (HumilityCloakQuest)}, null);
+                        m_Quest = (IQuestionAnswer) basequest;
+                        if (m_Quest == null)
                         {
-                            m_AnswerStrings = new string[stringNum];
-                            for (int i = 0; i < stringNum; i++)
-                                m_AnswerStrings[i] = reader.ReadString();
+                            if (Core.Debug) Console.WriteLine("m_Quest was null. Line 265 in QuestionScroll.cs");
+                            m_Quest = new HumilityCloakQuest(); // temporary fix
                         }
-                        int answerNum = reader.ReadInt();
-                        if (answerNum == 0) m_AnswerNumbers = null;
-                        else
-                        {
-                            m_AnswerNumbers = new int[answerNum];
-                            for (int i = 0; i < answerNum; i++)
-                                m_AnswerNumbers[i] = reader.ReadInt();
-                        }
-                        m_CorrectString = reader.ReadString();
-                        m_CorrectNumber = reader.ReadInt();
-                        break;
                     }
+                    catch
+                    {
+                        if (Core.Debug) Console.WriteLine("Try failed (Lines 263-269), so forced to Catch, in QuestionScroll.cs");
+                        m_Quest = new HumilityCloakQuest();
+                    } // temporary fix
+                    m_QuestionID = reader.ReadInt();
+                    m_QuestionString = reader.ReadString();
+                    m_QuestionNumber = reader.ReadInt();
+
+                    int stringNum = reader.ReadInt();
+                    if (stringNum == 0) m_AnswerStrings = null;
+                    else
+                    {
+                        m_AnswerStrings = new string[stringNum];
+                        for (int i = 0; i < stringNum; i++)
+                            m_AnswerStrings[i] = reader.ReadString();
+                    }
+                    int answerNum = reader.ReadInt();
+                    if (answerNum == 0) m_AnswerNumbers = null;
+                    else
+                    {
+                        m_AnswerNumbers = new int[answerNum];
+                        for (int i = 0; i < answerNum; i++)
+                            m_AnswerNumbers[i] = reader.ReadInt();
+                    }
+                    m_CorrectString = reader.ReadString();
+                    m_CorrectNumber = reader.ReadInt();
+                    break;
+                }
             }
         }
     }

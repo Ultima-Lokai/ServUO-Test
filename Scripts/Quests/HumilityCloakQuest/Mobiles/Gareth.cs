@@ -52,7 +52,7 @@ namespace Server.Engines.Quests
                         {
                             if (answer.CorrectAnswerGiven)
                             {
-                                if (answer.QuestionID < answer.Quest.Scrolls.Length - 1)
+                                if (answer.QuestionID < 6) // questions-answers for this quest are numbered 0 through 6
                                 {
                                     pm.SendMessage(goodWords[Utility.Random(goodWords.Length)]);
                                     answer.Quest.GiveNextQuestion(pm, answer.QuestionID + 1);
