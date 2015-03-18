@@ -10,7 +10,7 @@ namespace Server.Items
         private string m_Status;
 
         [CommandProperty(AccessLevel.GameMaster)]
-        public string Status { get { return m_Status; } set { m_Status = value; } }
+        public string Status { get { return m_Status; } set { m_Status = value; InvalidateProperties(); } }
 
         public HumilityMarker()
             : this("new")

@@ -76,7 +76,7 @@ namespace Server.Engines.Quests
 
         public override void OnAccept()
         {
-            Owner.AddToBackpack(new HumilityMarker());
+            Owner.AddToBackpack(new HumilityMarker("answering question #1"));
             Owner.SendLocalizedMessage(1075676);
             GiveNextQuestion(Owner, 0);
         }

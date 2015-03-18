@@ -45,6 +45,14 @@ namespace Server.Engines.Quests
                 Container pack = pm.Backpack;
                 if (pack != null && !pack.Deleted)
                 {
+                    HumilityMarker marker =
+                        (HumilityMarker)pack.FindItemByType(typeof(HumilityMarker));
+                    if (marker == null)
+                    {
+                        base.OnDoubleClick(m);
+                        return;
+                    }
+
                     QuestionScroll answer = (QuestionScroll)pack.FindItemByType(typeof(QuestionScroll));
 					if (answer != null)
 					{
@@ -54,6 +62,7 @@ namespace Server.Engines.Quests
                             {
                                 if (answer.QuestionID < 6) // questions-answers for this quest are numbered 0 through 6
                                 {
+                                    marker.Status = string.Format("answering question #{0}", answer.QuestionID + 2); // if index is 0, they are on question 1, so next question is #2.
                                     pm.SendMessage(goodWords[Utility.Random(goodWords.Length)]);
                                     answer.Quest.GiveNextQuestion(pm, answer.QuestionID + 1);
                                 }
@@ -83,13 +92,6 @@ namespace Server.Engines.Quests
                                     PlainGreyCloak cloak = (PlainGreyCloak)pack.FindItemByType(typeof(PlainGreyCloak));
                                     if (cloak != null)
                                     {
-                                        HumilityMarker marker =
-                                            (HumilityMarker) pack.FindItemByType(typeof (HumilityMarker));
-                                        if (marker == null)
-                                        {
-                                            marker = new HumilityMarker();
-                                            pm.AddToBackpack(marker);
-                                        }
                                         marker.Status = "testing";
                                         pm.SendGump(new HumilityRewardGump(this, marker, cloak, chain));
                                     }
@@ -99,6 +101,7 @@ namespace Server.Engines.Quests
                             }
                         }
                         catch { }
+                        return;
 					}
                 }
             }
