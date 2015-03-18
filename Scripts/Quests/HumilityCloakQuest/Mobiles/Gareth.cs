@@ -65,6 +65,8 @@ namespace Server.Engines.Quests
                                     marker.Status = string.Format("answering question #{0}", answer.QuestionID + 2); // if index is 0, they are on question 1, so next question is #2.
                                     pm.SendMessage(goodWords[Utility.Random(goodWords.Length)]);
                                     answer.Quest.GiveNextQuestion(pm, answer.QuestionID + 1);
+                                    answer.Delete();
+                                    return;
                                 }
                                 else ((HumilityCloakQuest)answer.Quest).GiveRewards();
                             }
@@ -72,9 +74,9 @@ namespace Server.Engines.Quests
                             {
                                 pm.SendLocalizedMessage(1075713);
                                 ((HumilityCloakQuest)answer.Quest).RemoveQuest();
+                                marker.Delete();
                             }
                             answer.Delete();
-                            return;
                         }
                         else
                             SayTo(pm, "Try to answer the question before speaking to me again.");

@@ -26,7 +26,7 @@ namespace Server.Engines.Quests
             else
                 mCorrectString = (string)correctAnswer;
 
-            int lowY = 385;
+            int lowY = 355;
             int answerNum = 0;
 
             Closable = false;

@@ -2,6 +2,7 @@
 using Server.Items;
 using Server.Mobiles;
 using System.Collections.Generic;
+using OpenUO.Core;
 
 namespace Server.Engines.Quests
 {
@@ -10,13 +11,14 @@ namespace Server.Engines.Quests
     {
         private string m_QuestionString;
         private int m_QuestionNumber;
-        private string[] m_AnswerStrings;
+        private object[] m_AnswerStrings;
         private int[] m_AnswerNumbers;
         private string m_CorrectString;
         private int m_CorrectNumber;
         private bool m_CorrectAnswerGiven;
         private IQuestionAnswer m_Quest;
         private int m_QuestionID;
+        private string m_Title;
 
         [CommandProperty(AccessLevel.GameMaster)]
         public int QuestionID { get { return m_QuestionID; } set { m_QuestionID = value; } }
@@ -35,7 +37,7 @@ namespace Server.Engines.Quests
         [CommandProperty(AccessLevel.GameMaster)]
         public string Answer_0_String
         {
-            get { try { return m_AnswerStrings[0]; } catch { return ""; } }
+            get { try { return (string)m_AnswerStrings[0]; } catch { return ""; } }
 
             set { try { m_AnswerStrings[0] = value; } catch { } }
         }
@@ -43,7 +45,7 @@ namespace Server.Engines.Quests
         [CommandProperty(AccessLevel.GameMaster)]
         public string Answer_1_String
         {
-            get { try { return m_AnswerStrings[1]; } catch { return ""; } }
+            get { try { return (string)m_AnswerStrings[1]; } catch { return ""; } }
 
             set { try { m_AnswerStrings[1] = value; } catch { } }
         }
@@ -51,7 +53,7 @@ namespace Server.Engines.Quests
         [CommandProperty(AccessLevel.GameMaster)]
         public string Answer_2_String
         {
-            get { try { return m_AnswerStrings[2]; } catch { return ""; } }
+            get { try { return (string)m_AnswerStrings[2]; } catch { return ""; } }
 
             set { try { m_AnswerStrings[2] = value; } catch { } }
         }
@@ -59,7 +61,7 @@ namespace Server.Engines.Quests
         [CommandProperty(AccessLevel.GameMaster)]
         public string Answer_3_String
         {
-            get { try { return m_AnswerStrings[3]; } catch { return ""; } }
+            get { try { return (string)m_AnswerStrings[3]; } catch { return ""; } }
 
             set { try { m_AnswerStrings[3] = value; } catch { } }
         }
@@ -67,7 +69,7 @@ namespace Server.Engines.Quests
         [CommandProperty(AccessLevel.GameMaster)]
         public string Answer_4_String
         {
-            get { try { return m_AnswerStrings[4]; } catch { return ""; } }
+            get { try { return (string)m_AnswerStrings[4]; } catch { return ""; } }
 
             set { try { m_AnswerStrings[4] = value; } catch { } }
         }
@@ -75,7 +77,7 @@ namespace Server.Engines.Quests
         [CommandProperty(AccessLevel.GameMaster)]
         public string Answer_5_String
         {
-            get { try { return m_AnswerStrings[5]; } catch { return ""; } }
+            get { try { return (string)m_AnswerStrings[5]; } catch { return ""; } }
 
             set { try { m_AnswerStrings[5] = value; } catch { } }
         }
@@ -128,7 +130,7 @@ namespace Server.Engines.Quests
             set { try { m_AnswerNumbers[5] = value; } catch { } }
         }
 
-        public string[] AnswerStrings
+        public object[] AnswerStrings
         {
             get { return m_AnswerStrings; }
             set { m_AnswerStrings = value; }
@@ -142,6 +144,9 @@ namespace Server.Engines.Quests
         [CommandProperty(AccessLevel.GameMaster)]
         public int CorrectNumber { get { return m_CorrectNumber; } set { m_CorrectNumber = value; } }
 
+        [CommandProperty(AccessLevel.GameMaster)]
+        public string Title { get { return m_Title; } set { m_Title = value; } }
+
 
         [Constructable]
         public QuestionScroll()
@@ -149,13 +154,44 @@ namespace Server.Engines.Quests
         {
         }
 
-        public QuestionScroll(IQuestionAnswer quest, int questionID, int question, int[] answers, int correctAnswer)
-            : this(quest, questionID, string.Empty, question, null, answers, string.Empty, correctAnswer)
+        public QuestionScroll(IQuestionAnswer quest, int questionID, object question, object[] answers, object correctAnswer, string title)
+            : base(0x14ED)
         {
-        }
-        public QuestionScroll(IQuestionAnswer quest, int questionID, string question, string[] answers, string correctAnswer)
-            : this(quest, questionID, question, 0, answers, null, correctAnswer, 0)
-        {
+            Name = "a question scroll";
+            m_Quest = quest;
+            m_QuestionID = questionID;
+            if (question is string)
+            {
+                m_QuestionString = (string) question;
+                m_QuestionNumber = 0;
+            }
+            else
+            {
+                m_QuestionString = string.Empty;
+                m_QuestionNumber = (int)question;
+            }
+            m_AnswerStrings = answers is string[] ? answers : null;
+            if (answers.Length > 0 && answers[0] is int)
+            {
+                m_AnswerNumbers = new int[answers.Length];
+                for (int i = 0; i < answers.Length; i++)
+                    m_AnswerNumbers[i] = (int) answers[i];
+            }
+            else
+            {
+                m_AnswerNumbers = null;
+            }
+            if (correctAnswer is string)
+            {
+                m_CorrectString = (string) correctAnswer;
+                m_CorrectNumber = 0;
+            }
+            else
+            {
+                m_CorrectString = string.Empty;
+                m_CorrectNumber = (int)correctAnswer;
+            }
+            m_Title = title;
         }
 
         [Constructable]
@@ -198,7 +234,7 @@ namespace Server.Engines.Quests
 
             if (m_QuestionNumber == 0)
                 from.SendGump(new QuestionAnswerGump(this, m_QuestionString, m_AnswerStrings,
-                    m_CorrectString, "Question - Answer"));
+                    m_CorrectString, m_Title));
             else
             {
                 object[] answers = new object[m_AnswerNumbers.Length];
@@ -206,7 +242,7 @@ namespace Server.Engines.Quests
                 {
                     answers[i] = m_AnswerNumbers[i];
                 }
-                from.SendGump(new QuestionAnswerGump(this, (object)m_QuestionNumber, answers, (object)m_CorrectNumber, "Question - Answer"));
+                from.SendGump(new QuestionAnswerGump(this, (object)m_QuestionNumber, answers, (object)m_CorrectNumber, m_Title));
             }
         }
 
@@ -214,7 +250,10 @@ namespace Server.Engines.Quests
         {
             base.Serialize(writer);
 
-            writer.Write((int)1); // version
+            writer.Write((int)2); // version
+
+            // version 2
+            writer.Write(m_Title);
 
             // version 1
             writer.Write((bool)m_CorrectAnswerGiven);
@@ -250,6 +289,11 @@ namespace Server.Engines.Quests
 
             switch (version)
             {
+                case 2:
+                {
+                    m_Title = reader.ReadString();
+                    goto case 1;
+                }
                 case 1:
                 {
                     m_CorrectAnswerGiven = reader.ReadBool();
@@ -258,6 +302,7 @@ namespace Server.Engines.Quests
                 }
                 case 0:
                 {
+                    if (version < 2) m_Title = "Question/Answer";
                     try
                     {
                         BaseQuest basequest = QuestHelper.RandomQuest(((PlayerMobile)questMobile),
@@ -282,7 +327,7 @@ namespace Server.Engines.Quests
                     if (stringNum == 0) m_AnswerStrings = null;
                     else
                     {
-                        m_AnswerStrings = new string[stringNum];
+                        m_AnswerStrings = new object[stringNum];
                         for (int i = 0; i < stringNum; i++)
                             m_AnswerStrings[i] = reader.ReadString();
                     }
@@ -305,7 +350,7 @@ namespace Server.Engines.Quests
     public class AnswerObjective : ObtainObjective
     {
         public AnswerObjective()
-            : base(typeof(AnswerObjective), "to answer the questions...", 1)
+            : base(typeof(AnswerObjective), "answer to the questions...", 1)
         {
         }
 

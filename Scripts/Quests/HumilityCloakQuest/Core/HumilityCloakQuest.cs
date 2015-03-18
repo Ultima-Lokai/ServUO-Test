@@ -8,7 +8,9 @@ namespace Server.Engines.Quests
 
     public interface IQuestionAnswer
     {
-        int[][] ScrollValues { get; }
+        object[] Questions { get; }
+        object[][] AnswerChoices { get; }
+        object[] Answers { get; }
         void GiveNextQuestion(PlayerMobile from, int index);
     }
     
@@ -36,26 +38,26 @@ namespace Server.Engines.Quests
         public override bool DoneOnce { get { return false; } }
         public override TimeSpan RestartDelay { get { return TimeSpan.FromDays(1.0); } }
 
-        private int[][] m_ScrollValues = new int[][]
+        private object[][] m_AnswerChoices = new object[][]
         {
-            new int[] {1075679, 1075680, 1075681, 1075682},
-            new int[] {1075684, 1075685, 1075686, 1075687}, 
-            new int[] {1075689, 1075690, 1075691, 1075692},
-            new int[] {1075694, 1075695, 1075696, 1075697},
-            new int[] {1075699, 1075700, 1075701, 1075702},
-            new int[] {1075704, 1075705, 1075706, 1075707},
-            new int[] {1075709, 1075710, 1075711, 1075712}
+            new object[] {1075679, 1075680, 1075681, 1075682},
+            new object[] {1075684, 1075685, 1075686, 1075687}, 
+            new object[] {1075689, 1075690, 1075691, 1075692},
+            new object[] {1075694, 1075695, 1075696, 1075697},
+            new object[] {1075699, 1075700, 1075701, 1075702},
+            new object[] {1075704, 1075705, 1075706, 1075707},
+            new object[] {1075709, 1075710, 1075711, 1075712}
         };
 
-        private int[] m_Questions = new int[] { 1075678, 1075683, 1075688, 1075693, 1075698, 1075703, 1075708 };
+        private object[] m_Questions = new object[] { 1075678, 1075683, 1075688, 1075693, 1075698, 1075703, 1075708 };
 
-        private int[] m_Answers = new int[] {1075679, 1075685, 1075691, 1075697, 1075700, 1075705, 1075709};
+        private object[] m_Answers = new object[] { 1075679, 1075685, 1075691, 1075697, 1075700, 1075705, 1075709 };
 
-        public int[][] ScrollValues { get { return m_ScrollValues; } }
+        public object[][] AnswerChoices { get { return m_AnswerChoices; } }
 
-        public int[] Questions { get { return m_Questions; } }
+        public object[] Questions { get { return m_Questions; } }
 
-        public int[] Answers { get { return m_Answers; } }
+        public object[] Answers { get { return m_Answers; } }
 
         public HumilityCloakQuest()
         {
@@ -65,8 +67,8 @@ namespace Server.Engines.Quests
 
         public void GiveNextQuestion(PlayerMobile from, int index)
         {
-            QuestionScroll scroll = new QuestionScroll(this, index, Questions[index], ScrollValues[index],
-                Answers[index]);
+            QuestionScroll scroll = new QuestionScroll(this, index, Questions[index], AnswerChoices[index],
+                Answers[index], string.Format("Question #{0}", index + 1));
             scroll.LootType = LootType.Blessed;
             scroll.BlessedFor = from;
 
@@ -79,6 +81,7 @@ namespace Server.Engines.Quests
             Owner.AddToBackpack(new HumilityMarker("answering question #1"));
             Owner.SendLocalizedMessage(1075676);
             GiveNextQuestion(Owner, 0);
+            base.OnAccept();
         }
 
         public override void GiveRewards()
