@@ -5,15 +5,17 @@ namespace Server.Items
 {
     public class HumilityMarker : Item
     {
-        private DateTime m_DecayTime;
-        private Timer m_Timer;
+        private DateTime m_DelayTime;
         private string m_Status;
 
         [CommandProperty(AccessLevel.GameMaster)]
         public string Status { get { return m_Status; } set { m_Status = value; InvalidateProperties(); } }
 
+        [CommandProperty(AccessLevel.GameMaster)]
+        public DateTime DelayTime { get { return m_DelayTime; } set { m_DelayTime = value; InvalidateProperties(); } }
+
         public HumilityMarker()
-            : this("new")
+            : this("invalid")
         {
         }
 
@@ -29,16 +31,12 @@ namespace Server.Items
         {
             Weight = 0;
             Name = "Humility Marker";
-            Hue = 0;
             LootType = LootType.Blessed;
             Movable = false;
             Visible = false;
             m_Status = status;
 
-            m_DecayTime = DateTime.Now + TimeSpan.FromDays(7);
-
-            m_Timer = new InternalTimer(this, m_DecayTime);
-            m_Timer.Start();
+            m_DelayTime = DateTime.UtcNow;
         }
 
         public HumilityMarker(Serial serial)
@@ -46,21 +44,12 @@ namespace Server.Items
         {
         }
 
-        public override void OnAfterDelete()
-        {
-            if (m_Timer != null)
-                m_Timer.Stop();
-
-            base.OnAfterDelete();
-        }
-
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
             writer.Write((int)0);
 
-            writer.WriteDeltaTime(m_DecayTime);
-
+            writer.WriteDeltaTime(m_DelayTime);
             writer.Write(m_Status);
         }
 
@@ -69,28 +58,9 @@ namespace Server.Items
             base.Deserialize(reader);
             int version = reader.ReadInt();
 
-            m_DecayTime = reader.ReadDeltaTime();
-            m_Timer = new InternalTimer(this, m_DecayTime);
-            m_Timer.Start();
-
+            m_DelayTime = reader.ReadDeltaTime();
             m_Status = reader.ReadString();
 
-        }
-
-        private class InternalTimer : Timer
-        {
-            private Item m_Item;
-
-            public InternalTimer(Item item, DateTime end)
-                : base(end - DateTime.Now)
-            {
-                m_Item = item;
-            }
-
-            protected override void OnTick()
-            {
-                m_Item.Delete();
-            }
         }
     }
 } 

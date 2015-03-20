@@ -313,7 +313,7 @@ namespace Server.Engines.Quests
         {
         }
 
-        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestMoongateZoo) }; } }
+        public override Type[] Quests { get { return new Type[] { typeof(HumilityCloakQuestMoonglowZoo) }; } }
 
         public override int LabelNumber { get { return 1075792; } } // For the Life of Britannia Sash
 

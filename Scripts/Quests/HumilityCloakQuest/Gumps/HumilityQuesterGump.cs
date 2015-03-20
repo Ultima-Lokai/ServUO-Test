@@ -15,6 +15,11 @@ namespace Server.Engines.Quests
         }
 
         public HumilityQuesterGump(MondainQuester quester, object response)
+            : this(quester, response, "")
+        {
+        }
+
+        public HumilityQuesterGump(MondainQuester quester, object response, string args)
             : base(75, 25)
         {
             if (quester is HumilityQuester)
@@ -34,7 +39,10 @@ namespace Server.Engines.Quests
             AddHtmlObject(130, 45, 270, 20, name, White, false, false); // Name
             AddImageTiled(130, 65, 175, 1, 9101);
 
-            AddHtmlObject(120, 160, 280, 170, response, White, false, false); // Response
+            if (args == "")
+                AddHtmlObject(120, 160, 280, 170, response, White, false, false); // Response
+            else
+                AddHtmlLocalizedObject(120, 160, 280, 170, response, args, White, false, false); // Response
 
             AddButton(340, 390, 247, 248, 1, GumpButtonType.Reply, 0);
 
@@ -65,6 +73,22 @@ namespace Server.Engines.Quests
             Mobile from = sender.Mobile;
             if (from != null && !from.Deleted && mQuester != null)
                 mQuester.OnGumpClose(from);
+        }
+
+        public void AddHtmlLocalizedObject(int x, int y, int width, int height, object message, string args, int color, bool back, bool scroll)
+        {
+            if (message is string)
+            {
+                string html = (string)message;
+
+                this.AddHtml(x, y, width, height, Color(html, C16232(color)), back, scroll);
+            }
+            else if (message is int)
+            {
+                int html = (int)message;
+
+                this.AddHtmlLocalized(x, y, width, height, html, args, C16216(color), back, scroll);
+            }
         }
     }
 }

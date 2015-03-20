@@ -176,10 +176,11 @@ namespace Server.Items
         public override bool CanEquip(Mobile from)
         {
             if (from is PlayerMobile && from == m_QuestOwner)
-                if (QuestHelper.InProgress((PlayerMobile)from, new Type[] { typeof(HumilityCloakQuestFindTheHumble) }) || 
-                    QuestHelper.FindCompletedQuest((PlayerMobile)from, typeof(HumilityCloakQuestFindTheHumble), false))
+                if (
+                    QuestHelper.FindCompletedQuest((PlayerMobile) from, typeof (HumilityCloakQuestFindTheHumble), false) ||
+                    QuestHelper.InProgress((PlayerMobile) from, new Type[] {typeof (HumilityCloakQuestFindTheHumble)}))
                 {
-                    return true;  // They can wear it if they are currently in, or have completed, the Quest.
+                    return true; // They can wear it if they are currently in, or have completed, the Quest.
                 }
             from.SendMessage("You have no reason to wear this plain grey cloak.");
             return false;

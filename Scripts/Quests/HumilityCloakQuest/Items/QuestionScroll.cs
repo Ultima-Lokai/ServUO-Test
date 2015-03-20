@@ -16,14 +16,11 @@ namespace Server.Engines.Quests
         private string m_CorrectString;
         private int m_CorrectNumber;
         private bool m_CorrectAnswerGiven;
-        private IQuestionAnswer m_Quest;
         private int m_QuestionID;
         private string m_Title;
 
         [CommandProperty(AccessLevel.GameMaster)]
         public int QuestionID { get { return m_QuestionID; } set { m_QuestionID = value; } }
-
-        public IQuestionAnswer Quest { get { return m_Quest; } set { m_Quest = value; } }
 
         [CommandProperty(AccessLevel.GameMaster)]
         public bool CorrectAnswerGiven { get { return m_CorrectAnswerGiven; } set { m_CorrectAnswerGiven = value; } }
@@ -33,102 +30,6 @@ namespace Server.Engines.Quests
 
         [CommandProperty(AccessLevel.GameMaster)]
         public int QuestionNumber { get { return m_QuestionNumber; } set { m_QuestionNumber = value; } }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string Answer_0_String
-        {
-            get { try { return (string)m_AnswerStrings[0]; } catch { return ""; } }
-
-            set { try { m_AnswerStrings[0] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string Answer_1_String
-        {
-            get { try { return (string)m_AnswerStrings[1]; } catch { return ""; } }
-
-            set { try { m_AnswerStrings[1] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string Answer_2_String
-        {
-            get { try { return (string)m_AnswerStrings[2]; } catch { return ""; } }
-
-            set { try { m_AnswerStrings[2] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string Answer_3_String
-        {
-            get { try { return (string)m_AnswerStrings[3]; } catch { return ""; } }
-
-            set { try { m_AnswerStrings[3] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string Answer_4_String
-        {
-            get { try { return (string)m_AnswerStrings[4]; } catch { return ""; } }
-
-            set { try { m_AnswerStrings[4] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public string Answer_5_String
-        {
-            get { try { return (string)m_AnswerStrings[5]; } catch { return ""; } }
-
-            set { try { m_AnswerStrings[5] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Answer_0_Number
-        {
-            get { try { return m_AnswerNumbers[0]; } catch { return 0; } }
-
-            set { try { m_AnswerNumbers[0] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Answer_1_Number
-        {
-            get { try { return m_AnswerNumbers[1]; } catch { return 0; } }
-
-            set { try { m_AnswerNumbers[1] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Answer_2_Number
-        {
-            get { try { return m_AnswerNumbers[2]; } catch { return 0; } }
-
-            set { try { m_AnswerNumbers[2] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Answer_3_Number
-        {
-            get { try { return m_AnswerNumbers[3]; } catch { return 0; } }
-
-            set { try { m_AnswerNumbers[3] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Answer_4_Number
-        {
-            get { try { return m_AnswerNumbers[4]; } catch { return 0; } }
-
-            set { try { m_AnswerNumbers[4] = value; } catch { } }
-        }
-
-        [CommandProperty(AccessLevel.GameMaster)]
-        public int Answer_5_Number
-        {
-            get { try { return m_AnswerNumbers[5]; } catch { return 0; } }
-
-            set { try { m_AnswerNumbers[5] = value; } catch { } }
-        }
 
         public object[] AnswerStrings
         {
@@ -147,18 +48,17 @@ namespace Server.Engines.Quests
         [CommandProperty(AccessLevel.GameMaster)]
         public string Title { get { return m_Title; } set { m_Title = value; } }
 
-
         [Constructable]
         public QuestionScroll()
-            : this(null, 0, string.Empty, 0, null, null, string.Empty, 0)
+            : this(0, string.Empty, null, string.Empty, "Invalid Question")
         {
         }
 
-        public QuestionScroll(IQuestionAnswer quest, int questionID, object question, object[] answers, object correctAnswer, string title)
+        [Constructable]
+        public QuestionScroll(int questionID, object question, object[] answers, object correctAnswer, string title)
             : base(0x14ED)
         {
             Name = "a question scroll";
-            m_Quest = quest;
             m_QuestionID = questionID;
             if (question is string)
             {
@@ -192,22 +92,6 @@ namespace Server.Engines.Quests
                 m_CorrectNumber = (int)correctAnswer;
             }
             m_Title = title;
-        }
-
-        [Constructable]
-        public QuestionScroll(IQuestionAnswer quest, int questionID, string questionString, int questionNumber, string[] answerStrings, int[] answerNumbers,
-            string correctString, int correctNumber)
-            : base(0x14ED)
-        {
-            Name = "a question scroll";
-            m_Quest = quest;
-            m_QuestionID = questionID;
-            m_QuestionString = questionString;
-            m_QuestionNumber = questionNumber;
-            m_AnswerStrings = answerStrings;
-            m_AnswerNumbers = answerNumbers;
-            m_CorrectString = correctString;
-            m_CorrectNumber = correctNumber;
         }
 
         public QuestionScroll(Serial serial)
@@ -250,16 +134,11 @@ namespace Server.Engines.Quests
         {
             base.Serialize(writer);
 
-            writer.Write((int)2); // version
-
-            // version 2
-            writer.Write(m_Title);
-
-            // version 1
-            writer.Write((bool)m_CorrectAnswerGiven);
-            writer.WriteMobile(BlessedFor);
+            writer.Write((int)0); // version
 
             // version 0
+            writer.Write(m_Title);
+            writer.Write((bool)m_CorrectAnswerGiven);
             writer.Write((int)m_QuestionID);
             writer.Write((string)m_QuestionString);
             writer.Write((int)m_QuestionNumber);
@@ -285,40 +164,12 @@ namespace Server.Engines.Quests
 
             int version = reader.ReadInt();
 
-            Mobile questMobile = BlessedFor;
-
             switch (version)
             {
-                case 2:
-                {
-                    m_Title = reader.ReadString();
-                    goto case 1;
-                }
-                case 1:
-                {
-                    m_CorrectAnswerGiven = reader.ReadBool();
-                    questMobile = reader.ReadMobile();
-                    goto case 0;
-                }
                 case 0:
                 {
-                    if (version < 2) m_Title = "Question/Answer";
-                    try
-                    {
-                        BaseQuest basequest = QuestHelper.RandomQuest(((PlayerMobile)questMobile),
-                            new Type[] {typeof (HumilityCloakQuest)}, null);
-                        m_Quest = (IQuestionAnswer) basequest;
-                        if (m_Quest == null)
-                        {
-                            if (Core.Debug) Console.WriteLine("m_Quest was null. Line 265 in QuestionScroll.cs");
-                            m_Quest = new HumilityCloakQuest(); // temporary fix
-                        }
-                    }
-                    catch
-                    {
-                        if (Core.Debug) Console.WriteLine("Try failed (Lines 263-269), so forced to Catch, in QuestionScroll.cs");
-                        m_Quest = new HumilityCloakQuest();
-                    } // temporary fix
+                    m_Title = reader.ReadString();
+                    m_CorrectAnswerGiven = reader.ReadBool();
                     m_QuestionID = reader.ReadInt();
                     m_QuestionString = reader.ReadString();
                     m_QuestionNumber = reader.ReadInt();
@@ -350,7 +201,7 @@ namespace Server.Engines.Quests
     public class AnswerObjective : ObtainObjective
     {
         public AnswerObjective()
-            : base(typeof(AnswerObjective), "answer to the questions...", 1)
+            : base(typeof(AnswerObjective), "answer to the question...", 1)
         {
         }
 

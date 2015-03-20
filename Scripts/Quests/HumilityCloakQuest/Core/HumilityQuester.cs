@@ -99,21 +99,20 @@ namespace Server.Engines.Quests
                         dropped.Delete();
                         Item item = (Item) Activator.CreateInstance(offerType);
                         mobile.AddToBackpack(item);
-						if (this is Sean)
+                        if (this is Sean)
                         {
                             HumilityMarker marker =
-                                (HumilityMarker)pack.FindItemByType(typeof(HumilityMarker));
+                                (HumilityMarker) pack.FindItemByType(typeof (HumilityMarker));
                             if (marker == null)
                             {
                                 marker = new HumilityMarker("sean");
                                 mobile.AddToBackpack(marker);
                             }
-							SayTo(mobile, ThanksMessage, cloak.Desires[QuesterID].DesireName);
+                            mobile.SendGump(new HumilityQuesterGump(this, ThanksMessage, cloak.Desires[QuesterID].DesireName));
                             mobile.AddToBackpack(cloak);
-						}
-						else
-							SayTo(mobile, ThanksMessage,
-								cloak.Desires[QuesterID].DesireName + "\t" + cloak.Desires[QuesterID].OfferName);
+                        }
+                        else
+                            mobile.SendGump(new HumilityQuesterGump(this, ThanksMessage, cloak.Desires[QuesterID].DesireName + "\t" + cloak.Desires[QuesterID].OfferName));
                         return true;
 
                     }

@@ -5,26 +5,21 @@ using Server.Mobiles;
 
 namespace Server.Engines.Quests
 {
-
-    public interface IQuestionAnswer
-    {
-        object[] Questions { get; }
-        object[][] AnswerChoices { get; }
-        object[] Answers { get; }
-        void GiveNextQuestion(PlayerMobile from, int index);
-    }
     
-    public class HumilityCloakQuest : BaseQuest, IQuestionAnswer
+    public class HumilityCloakQuest : BaseQuest
     {
         /* Greetings my friend! My name is Gareth, and I represent a group of citizens who wish to rejuvenate interest in our kingdom's noble heritage. 
          * 'Tis our belief that one of Britannia's greatest triumphs was the institution of the Virtues, neglected though they be now. To that end I 
          * have a set of tasks prepared for one who would follow a truly Humble path. Art thou interested in joining our effort? */
         public override object Description { get { return 1075675; } }
 
+        /* Know Thy Humility */
+        public override object Title { get { return 1075850; } }
+
         /* Very good! I can see that ye hath more than just a passing interest in our work. There are many trials before thee, but I have every hope 
          * that ye shall have the diligence and fortitude to carry on to the very end. Before we begin, please prepare thyself by thinking about the 
          * virtue of Humility. Ponder not only its symbols, but also its meanings. Once ye believe that thou art ready, speak with me again. */
-        public override object Complete { get { return 1075716; } }
+        public override object Complete { get { return 1075714; } }
 
         /* Ah... no, that is not quite right. Truly, Humility is something that takes time and experience to understand. I wish to challenge thee to 
          * seek out more knowledge concerning this virtue, and tomorrow let us speak again about what thou hast learned.<br> */
@@ -33,31 +28,10 @@ namespace Server.Engines.Quests
         /* I wish that thou wouldest reconsider. */
         public override object Refuse { get { return 1075677; } }
 
-        public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
+        //public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
         public override Type NextQuest { get { return typeof(HumilityCloakQuestVesperMuseum); } }
-        public override bool DoneOnce { get { return false; } }
+        public override bool DoneOnce { get { return true; } }
         public override TimeSpan RestartDelay { get { return TimeSpan.FromDays(1.0); } }
-
-        private object[][] m_AnswerChoices = new object[][]
-        {
-            new object[] {1075679, 1075680, 1075681, 1075682},
-            new object[] {1075684, 1075685, 1075686, 1075687}, 
-            new object[] {1075689, 1075690, 1075691, 1075692},
-            new object[] {1075694, 1075695, 1075696, 1075697},
-            new object[] {1075699, 1075700, 1075701, 1075702},
-            new object[] {1075704, 1075705, 1075706, 1075707},
-            new object[] {1075709, 1075710, 1075711, 1075712}
-        };
-
-        private object[] m_Questions = new object[] { 1075678, 1075683, 1075688, 1075693, 1075698, 1075703, 1075708 };
-
-        private object[] m_Answers = new object[] { 1075679, 1075685, 1075691, 1075697, 1075700, 1075705, 1075709 };
-
-        public object[][] AnswerChoices { get { return m_AnswerChoices; } }
-
-        public object[] Questions { get { return m_Questions; } }
-
-        public object[] Answers { get { return m_Answers; } }
 
         public HumilityCloakQuest()
         {
@@ -65,26 +39,15 @@ namespace Server.Engines.Quests
             AddReward(new BaseReward("Virtue is its own reward."));
         }
 
-        public void GiveNextQuestion(PlayerMobile from, int index)
-        {
-            QuestionScroll scroll = new QuestionScroll(this, index, Questions[index], AnswerChoices[index],
-                Answers[index], string.Format("Question #{0}", index + 1));
-            scroll.LootType = LootType.Blessed;
-            scroll.BlessedFor = from;
-
-            if (!from.PlaceInBackpack(scroll))
-                from.Drop(scroll, from.Location);
-        }
-
         public override void OnAccept()
         {
             Owner.AddToBackpack(new HumilityMarker("answering question #1"));
             Owner.SendLocalizedMessage(1075676);
-            GiveNextQuestion(Owner, 0);
+            Gareth.GiveNextQuestion(Owner, 0);
             base.OnAccept();
         }
 
-        public override void GiveRewards()
+        public override void OnResign(bool resignChain)
         {
             Container pack = Owner.Backpack;
             if (pack == null)
@@ -93,15 +56,45 @@ namespace Server.Engines.Quests
                 Owner.EquipItem(pack);
             }
             HumilityMarker marker =
-                (HumilityMarker)pack.FindItemByType(typeof(HumilityMarker));
-            if (marker == null)
+                (HumilityMarker) pack.FindItemByType(typeof (HumilityMarker));
+            if (marker != null)
             {
-                marker = new HumilityMarker();
-                Owner.AddToBackpack(marker);
+                marker.Delete();
             }
-            marker.Status = "vesper";
-            base.GiveRewards();
+            PlainGreyCloak cloak = (PlainGreyCloak) pack.FindItemByType(typeof (PlainGreyCloak));
+            if (cloak == null)
+            {
+                cloak = (PlainGreyCloak) Owner.FindItemOnLayer(Layer.Cloak);
+            }
+            if (cloak != null) cloak.Delete();
+            base.OnResign(resignChain);
         }
+
+        //public override void GiveRewards()
+        //{
+        //    Container pack = Owner.Backpack;
+        //    if (pack == null)
+        //    {
+        //        pack = new Backpack();
+        //        Owner.EquipItem(pack);
+        //    }
+        //    HumilityMarker marker =
+        //        (HumilityMarker)pack.FindItemByType(typeof(HumilityMarker));
+        //    if (marker == null)
+        //    {
+        //        marker = new HumilityMarker();
+        //        Owner.AddToBackpack(marker);
+        //    }
+        //    marker.Status = "wait before vesper";
+        //    this.RemoveQuest();
+
+        //    // 
+        //    BaseQuest quest = QuestHelper.RandomQuest(this.Owner, new Type[] { this.NextQuest }, this.StartingMobile);
+
+        //        if (quest != null && quest.ChainID == this.ChainID)
+        //            this.Owner.SendGump(new MondainQuestGump(quest));
+            
+        //}
 
         public override void Serialize(GenericWriter writer)
         {
@@ -121,7 +114,7 @@ namespace Server.Engines.Quests
     public class HumilityCloakQuestVesperMuseum : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
-        public override Type NextQuest { get { return typeof(HumilityCloakQuestMoongateZoo); } }
+        public override Type NextQuest { get { return typeof(HumilityCloakQuestMoonglowZoo); } }
         public override bool DoneOnce { get { return true; } }
 
         /* Community Service - Museum */
@@ -149,6 +142,28 @@ namespace Server.Engines.Quests
             AddObjective(new ObtainObjective(typeof(HumilityCrookReplica), "A Replica of the Shepherd's Crook of Humility", 1, 0x0E82));
         }
 
+        public override void OnAccept()
+        {
+            Container pack = Owner.Backpack;
+            if (pack == null)
+            {
+                pack = new Backpack();
+                Owner.EquipItem(pack);
+            }
+            HumilityMarker marker =
+                (HumilityMarker)pack.FindItemByType(typeof(HumilityMarker));
+            if (marker == null)
+            {
+                Owner.AddToBackpack(new HumilityMarker("vesper"));
+            }
+            else
+            {
+                marker.Status = "vesper";
+            }
+            Owner.SendLocalizedMessage(1075718);
+            base.OnAccept();
+        }
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -164,7 +179,7 @@ namespace Server.Engines.Quests
         }
     }
 
-    public class HumilityCloakQuestMoongateZoo : BaseQuest
+    public class HumilityCloakQuestMoonglowZoo : BaseQuest
     {
         public override QuestChain ChainID { get { return QuestChain.HumilityCloak; } }
         public override Type NextQuest { get { return typeof(HumilityCloakQuestBritainLibrary); } }
@@ -188,10 +203,32 @@ namespace Server.Engines.Quests
          * Thanks to thee, it can continue to thrive. */
         public override object Complete { get { return 1075727; } }
 
-        public HumilityCloakQuestMoongateZoo()
+        public HumilityCloakQuestMoonglowZoo()
             : base()
         {
             AddObjective(new ObtainObjective(typeof(ForLifeBritanniaSash), "For the Life of Britannia Sash", 1, 0x1542));
+        }
+
+        public override void OnAccept()
+        {
+            Container pack = Owner.Backpack;
+            if (pack == null)
+            {
+                pack = new Backpack();
+                Owner.EquipItem(pack);
+            }
+            HumilityMarker marker =
+                (HumilityMarker)pack.FindItemByType(typeof(HumilityMarker));
+            if (marker == null)
+            {
+                Owner.AddToBackpack(new HumilityMarker("moonglow"));
+            }
+            else
+            {
+                marker.Status = "moonglow";
+            }
+            Owner.SendLocalizedMessage(1075724);
+            base.OnAccept();
         }
 
         public override void Serialize(GenericWriter writer)
@@ -243,6 +280,28 @@ namespace Server.Engines.Quests
 
         }
 
+        public override void OnAccept()
+        {
+            Container pack = Owner.Backpack;
+            if (pack == null)
+            {
+                pack = new Backpack();
+                Owner.EquipItem(pack);
+            }
+            HumilityMarker marker =
+                (HumilityMarker)pack.FindItemByType(typeof(HumilityMarker));
+            if (marker == null)
+            {
+                Owner.AddToBackpack(new HumilityMarker("britain"));
+            }
+            else
+            {
+                marker.Status = "britain";
+            }
+            Owner.SendLocalizedMessage(1075724);
+            base.OnAccept();
+        }
+
         public override void Serialize(GenericWriter writer)
         {
             base.Serialize(writer);
@@ -290,12 +349,28 @@ namespace Server.Engines.Quests
         public HumilityCloakQuestFindTheHumble()
             : base()
         {
-            AddObjective(new ObtainObjective(typeof(IronChain), "an item from one who best exemplifies Humility.", 1, 0x1085)); //1075788
+            AddObjective(new ObtainObjective(typeof(IronChain), "an item from the most Humble", 1, 0x1085)); //1075788
         }
 
         public override void OnAccept()
         {
             base.OnAccept();
+            Container pack = Owner.Backpack;
+            if (pack == null)
+            {
+                pack = new Backpack();
+                Owner.EquipItem(pack);
+            }
+            HumilityMarker marker =
+                (HumilityMarker)pack.FindItemByType(typeof(HumilityMarker));
+            if (marker == null)
+            {
+                Owner.AddToBackpack(new HumilityMarker("humble"));
+            }
+            else
+            {
+                marker.Status = "humble";
+            }
             Owner.SendGump(new HumilityQuesterGump(this.StartingMobile, 1075736));
             Owner.AddToBackpack(new BrassRing());
             Owner.AddToBackpack(new PlainGreyCloak(Owner));

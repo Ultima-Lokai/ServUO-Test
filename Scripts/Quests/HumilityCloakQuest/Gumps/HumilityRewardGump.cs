@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Server.Gumps;
 using Server.Items;
+using Server.Mobiles;
 using Server.Network;
 
 namespace Server.Engines.Quests
@@ -71,24 +72,33 @@ namespace Server.Engines.Quests
 
         public override void OnResponse(NetState sender, RelayInfo info)
         {
-            Mobile m = sender.Mobile;
-            if (info.ButtonID == (int)Buttons.Accept)
+            PlayerMobile m = (PlayerMobile) sender.Mobile;
+            if (m != null)
             {
-                if (m != null && m_Chain != null && m_Cloak != null && m_Gareth != null && m_Marker != null)
+                if (info.ButtonID == (int) Buttons.Accept)
+                {
+                    if (m_Chain != null && m_Cloak != null && m_Gareth != null && m_Marker != null)
+                    {
+                        m_Chain.Delete();
+                        m_Cloak.Delete();
+                        m_Marker.Delete();
+                        m.AddToBackpack(new ShieldOfRecognition());
+
+                        m.SendGump(new HumilityQuesterGump(m_Gareth, 1075783));
+                    }
+                }
+                else if (info.ButtonID == (int) Buttons.Refuse)
                 {
                     m_Chain.Delete();
-                    m_Cloak.Delete();
-                    m_Marker.Delete();
-                    m.AddToBackpack(new ShieldOfRecognition());
-
-                    m.SendGump(new HumilityQuesterGump(m_Gareth, 1075783));
+                    m_Marker.Status = "complete";
+                    m.SendGump(new HumilityQuesterGump(m_Gareth, 1075784));
                 }
-            }
-            else if (info.ButtonID==(int)Buttons.Refuse)
-            {
-                m_Chain.Delete();
-                m_Marker.Status = "complete";
-                m.SendGump(new HumilityQuesterGump(m_Gareth, 1075784));
+                try
+                {
+                    QuestHelper.RandomQuest(m, new Type[] {typeof (HumilityCloakQuestFindTheHumble)}, m_Gareth)
+                        .RemoveQuest(true);
+                }
+                catch { }
             }
         }
     }

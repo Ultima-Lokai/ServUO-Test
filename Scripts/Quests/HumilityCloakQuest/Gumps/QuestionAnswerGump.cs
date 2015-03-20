@@ -40,7 +40,7 @@ namespace Server.Engines.Quests
             AddHtmlObject(130, 45, 270, 20, title, White, false, false); // Title
             AddImageTiled(130, 65, 175, 1, 9101);
 
-            AddGroup(1);
+            //AddGroup(1);
             foreach (object answer in mAnswers)
             {
                 AddRadio(85, lowY, 9720, 9723, false, answerNum);
