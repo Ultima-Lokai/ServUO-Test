@@ -20,7 +20,7 @@ namespace Server.Engines.Quests
             mScroll = scroll;
             mQuestion = question;
             mAnswers = new object[answers.Length];
-            answers.Shuffle().CopyTo(mAnswers, 0);
+            answers.ShuffleTList().CopyTo(mAnswers, 0);
             if (correctAnswer is int)
                 mCorrectAnswer = (int)correctAnswer;
             else
@@ -105,8 +105,13 @@ namespace Server.Engines.Quests
     {
         static readonly Random rnd = new Random();
 
-        public static IList<T> Shuffle<T>(this IList<T> input)
+        public static IList<T> ShuffleTList<T>(this IList<T> input)
         {
+            if (input == null || input.Count == 0)
+            {
+                return input;
+            }
+
             for (var top = input.Count - 1; top > 1; --top)
             {
                 var swap = rnd.Next(0, top);

@@ -55,6 +55,43 @@ namespace Server.Items
             this.m_Resource = resource;
         }
 
+        public Type GetCraftableType()
+        {
+            switch (Resource)
+            {
+                case CraftResource.AshWood:
+                    return this is RunicFletcherTool ? typeof (AshRunicFletcherTool) : typeof (AshRunicDovetailSaw);
+                case CraftResource.Bloodwood:
+                    return this is RunicFletcherTool ? typeof(BloodwoodRunicFletcherTool) : typeof(BloodwoodRunicDovetailSaw);
+                case CraftResource.Frostwood:
+                    return this is RunicFletcherTool ? typeof(FrostwoodRunicFletcherTool) : typeof(FrostwoodRunicDovetailSaw);
+                case CraftResource.Heartwood:
+                    return this is RunicFletcherTool ? typeof(HeartwoodRunicFletcherTool) : typeof(HeartwoodRunicDovetailSaw);
+                case CraftResource.OakWood:
+                    return this is RunicFletcherTool ? typeof(OakRunicFletcherTool) : typeof(OakRunicDovetailSaw);
+                case CraftResource.RegularWood:
+                    return this is RunicFletcherTool ? typeof(RegularRunicFletcherTool) : typeof(RegularRunicDovetailSaw);
+                case CraftResource.YewWood:
+                    return this is RunicFletcherTool ? typeof(YewRunicFletcherTool) : typeof(YewRunicDovetailSaw);
+                case CraftResource.Agapite: return typeof (AgapiteRunicHammer);
+                case CraftResource.Bronze: return typeof(BronzeRunicHammer);
+                case CraftResource.Copper: return typeof(CopperRunicHammer);
+                case CraftResource.DullCopper: return typeof(DullCopperRunicHammer);
+                case CraftResource.Gold: return typeof(GoldRunicHammer);
+                case CraftResource.Iron: return typeof(IronRunicHammer);
+                case CraftResource.ShadowIron: return typeof(ShadowIronRunicHammer);
+                case CraftResource.Valorite: return typeof(ValoriteRunicHammer);
+                case CraftResource.Verite: return typeof(VeriteRunicHammer);
+                case CraftResource.RegularLeather: return typeof (RegularRunicSewingKit);
+                case CraftResource.BarbedLeather: return typeof(BarbedRunicSewingKit);
+                case CraftResource.HornedLeather: return typeof(HornedRunicSewingKit);
+                case CraftResource.SpinedLeather: return typeof(SpinedRunicSewingKit);
+                case CraftResource.None:
+                default:
+                    return null;
+            }
+        }
+
         public BaseRunicTool(CraftResource resource, int uses, int itemID)
             : base(uses, itemID)
         {

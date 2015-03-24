@@ -40,7 +40,7 @@ namespace Server.Items
                 typeof (WornHammer), typeof (PairOfWorkGloves)
             };
 
-            m_Offers.Shuffle();
+            m_Offers.ShuffleTList();
             m_Offers.Add(typeof(IronChain));
             m_Offers.CopyTo(m_Wants);
 

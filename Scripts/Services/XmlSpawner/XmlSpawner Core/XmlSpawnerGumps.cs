@@ -323,8 +323,8 @@ namespace Server.Mobiles
 			AddImageTiled(23, 300, 214, 23, 0x52);
 			AddImageTiled(24, 301, 213, 21, 0xBBC);
 
-			AddTextEntry(35, 275, 200, 21, 0, 1, null);
-			AddTextEntry(35, 300, 200, 21, 0, 2, null);
+			AddTextEntry(35, 275, 200, 21, 0, 1, (string)null);
+			AddTextEntry(35, 300, 200, 21, 0, 2, (string)null);
 		}
 
 		public override void OnResponse(NetState state, RelayInfo info)
@@ -783,18 +783,18 @@ namespace Server.Mobiles
 							strpackrange = m_Spawner.SpawnObjects[i].PackRange.ToString();
 						}
 
-						if (m_Spawner.SpawnObjects[i].NextSpawn > DateTime.Now)
+						if (m_Spawner.SpawnObjects[i].NextSpawn > DateTime.UtcNow)
 						{
 							// if the next spawn tick of the spawner will occur after the subgroup is available for spawning
 							// then report the next spawn tick since that is the earliest that the subgroup can actually be spawned
-							if ((DateTime.Now + m_Spawner.NextSpawn) > m_Spawner.SpawnObjects[i].NextSpawn)
+							if ((DateTime.UtcNow + m_Spawner.NextSpawn) > m_Spawner.SpawnObjects[i].NextSpawn)
 							{
 								strnext = m_Spawner.NextSpawn.ToString();
 							}
 							else
 							{
 								// estimate the earliest the next spawn could occur as the first spawn tick after reaching the subgroup nextspawn 
-								strnext = (m_Spawner.SpawnObjects[i].NextSpawn - DateTime.Now + m_Spawner.NextSpawn).ToString();
+								strnext = (m_Spawner.SpawnObjects[i].NextSpawn - DateTime.UtcNow + m_Spawner.NextSpawn).ToString();
 							}
 						}
 						else

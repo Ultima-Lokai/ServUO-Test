@@ -15,6 +15,7 @@ namespace Server
 		Serial Serial { get; }
 		Point3D Location { get; }
 		Map Map { get; }
+        bool Deleted { get; }
 
 		void Delete();
 		void ProcessDelta();
@@ -50,12 +51,14 @@ namespace Server
 		private Serial m_Serial;
 		private Point3D m_Location;
 		private readonly Map m_Map;
+	    private bool m_Deleted;
 
 		public Entity(Serial serial, Point3D loc, Map map)
 		{
 			m_Serial = serial;
 			m_Location = loc;
 			m_Map = map;
+		    m_Deleted = false;
 		}
 
 		public Serial Serial { get { return m_Serial; } }
@@ -68,10 +71,14 @@ namespace Server
 
 		public int Z { get { return m_Location.Z; } }
 
-		public Map Map { get { return m_Map; } }
+        public Map Map { get { return m_Map; } }
+
+        public bool Deleted { get { return m_Deleted; } }
 
 		public void Delete()
-		{ }
+		{
+		    m_Deleted = true;
+		}
 
 		public void ProcessDelta()
 		{ }

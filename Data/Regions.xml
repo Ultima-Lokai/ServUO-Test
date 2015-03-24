@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ServerRegions>
 	<Facet name="Felucca">
-		<region type="HumilityShrineRegion" priority="100" name="HumilityShrineRegion">
-			<rect x="4270" y="3700" width="7" height="7" />
-			<rect x="4271" y="3694" width="7" height="7" />
-			<rect x="4277" y="3693" width="7" height="7" />
-			<rect x="4277" y="3700" width="7" height="7" />
-			<go x="4275" y="3697" z="0" />
-		</region>
 		<region type="GuardedRegion" priority="50" name="Moongates">
 			<!-- britain -->
 			<rect x="1330" y="1991" width="13" height="13" />
@@ -932,13 +925,6 @@
 		</region>
 	</Facet>
 	<Facet name="Trammel">
-		<region type="HumilityShrineRegion" priority="100" name="HumilityShrineRegion">
-			<rect x="4270" y="3700" width="7" height="7" />
-			<rect x="4271" y="3694" width="7" height="7" />
-			<rect x="4277" y="3693" width="7" height="7" />
-			<rect x="4277" y="3700" width="7" height="7" />
-			<go x="4275" y="3697" z="0" />
-		</region>
 		<region type="GuardedRegion" priority="50" name="Moongates">
 			<!-- britain -->
 			<rect x="1330" y="1991" width="13" height="13" />
@@ -1368,7 +1354,7 @@
 					<rect x="3423" y="2480" width="111" height="143" />
 					<go x="3503" y="2574" z="14" />
 					<music name="InTown01" />
-					<guards disabled="true" />
+					<guards disabled="false" />
 					<region name="the New Haven Alchemist">
 						<rect x="3457" y="2564" width="9" height="9" />
 					</region>
