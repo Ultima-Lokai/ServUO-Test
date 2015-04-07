@@ -306,7 +306,13 @@ namespace Server
 				bool loaded;
 
 				while (!Core.Closing)
-				{
+                {
+                    if (World.Saving)
+                    {
+                        Thread.Sleep(1);
+                        continue;
+                    }
+
 					ProcessChanged();
 
 					loaded = false;

@@ -153,7 +153,7 @@ namespace Server.Custom
 
     public class BrowseImageNamesGump : Gump
     {
-        private static int m_Index = 0;
+        private int m_Index = 0;
         private string[] letters = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m",
                     "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z" };
 
@@ -215,8 +215,8 @@ namespace Server.Custom
 
     public class ImageDetailsGump : Gump
     {
-        private static int m_Index;
-        private static string m_Search;
+        private int m_Index;
+        private string m_Search;
 
         public ImageDetailsGump(int index, string search)
             : base(140, 70)
@@ -253,9 +253,9 @@ namespace Server.Custom
 
 	public class SearchImageGump : Gump
 	{
-		private static string m_Search = "";
-		private static int m_Index = 0;
-        private static bool m_ShowImage;
+		private string m_Search = "";
+		private int m_Index = 0;
+        private bool m_ShowImage;
 
 		//If the base constructor is called, set the search text to "", and start at index 0.
 		public SearchImageGump() : this(0, "") { }
@@ -316,10 +316,10 @@ namespace Server.Custom
                         {
                             //Show the item.
                             if (m_ShowImage) AddItem(x, 155, list[q]);
-                            AddImageTiledButton(x + 5, 90, 4030, 4031, list[q] + 20000, GumpButtonType.Reply, 0, 1352, 0, 140, 20, 500927);
-                            AddImageTiledButton(x + 35, 90, 4009, 4010, list[q] + 40000, GumpButtonType.Reply, 0, 1352, 0, 140, 20, 1027024);
+                            AddImageTiledButton(x + 5, 90, 4030, 4031, list[q] + 100000, GumpButtonType.Reply, 0, 1352, 0, 140, 20, 500927);
+                            AddImageTiledButton(x + 35, 90, 4009, 4010, list[q] + 200000, GumpButtonType.Reply, 0, 1352, 0, 140, 20, 1027024);
                             AddLabel(x + 5, 115, 20, "Details");
-                            AddImageTiledButton(x + 49, 118, 1210, 1210, list[q] + 60000, GumpButtonType.Reply, 0, 1352, 0, 140, 20, 1049074);
+                            AddImageTiledButton(x + 49, 118, 1210, 1210, list[q] + 300000, GumpButtonType.Reply, 0, 1352, 0, 140, 20, 1049074);
 
                             //Derive the name from the ItemTable in TileData, and reformat, if necessary.
                             name = TileData.ItemTable[list[q]].Name;
@@ -1014,23 +1014,23 @@ namespace Server.Custom
             TextRelay tr1 = info.GetTextEntry(1);
             TextRelay tr2 = info.GetTextEntry(2);
 
-            if (x >= 60000)
+            if (x >= 300000)
             {
-                int itemID = x - 60000;
+                int itemID = x - 300000;
                 m.SendGump(new ImageDetailsGump(itemID, m_Search));
             }
-            else if (x >= 40000)
+            else if (x >= 200000)
             {
-                int itemID = x - 40000;
+                int itemID = x - 200000;
                 string[] subArgs = new string[2];
                 subArgs[0] = "static";
                 subArgs[1] = Convert.ToString(itemID);
                 BoundingBoxPicker.Begin(m, new BoundingBoxCallback(TileBox_Callback), new TileState(subArgs));
             }
-            else if (x >= 20000)
+            else if (x >= 100000)
             {
-                int itemID = x - 20000;
-                m.Target = new CreateItemTarget(itemID, m_Search);
+                int itemID = x - 100000;
+                m.Target = new CreateItemTarget(itemID, m_Search, m_Index, m_ShowImage);
             }
             else if (x == 50) m.SendGump(new SearchImageGump(m_Index, m_Search, !m_ShowImage)); //Show or Hide images
             else if (x == 1)
@@ -1128,7 +1128,7 @@ namespace Server.Custom
             else m.CloseGump(typeof(SearchImageGump));
         }
 
-		private static void TileBox_Callback( Mobile from, Map map, Point3D start, Point3D end, object state )
+		private void TileBox_Callback( Mobile from, Map map, Point3D start, Point3D end, object state )
 		{
 			TileState ts = (TileState)state;
 			if ( ts.m_UseFixedZ ) start.Z = end.Z = ts.m_FixedZ;
@@ -1158,11 +1158,15 @@ namespace Server.Custom
 		{
 			private int m_ItemID;
 			private string m_Search;
+            private int mIndex;
+            private bool mShowImage;
 
-			public CreateItemTarget(int itemID, string search) : base(18, true, TargetFlags.None)
+			public CreateItemTarget(int itemID, string search, int index, bool showImage) : base(18, true, TargetFlags.None)
 			{
 				m_ItemID = itemID;
 				m_Search = search;
+                mIndex = index;
+                mShowImage = showImage;
 			}
 
 			protected override void OnTarget(Mobile from, object targeted)
@@ -1175,12 +1179,12 @@ namespace Server.Custom
 				if (target is StaticTarget) location.Z -= TileData.ItemTable[((StaticTarget)target).ItemID & 0x3FFF].CalcHeight;
 				Item newItem = new Static(m_ItemID);
 				newItem.MoveToWorld(location, from.Map);
-				from.Target = new CreateItemTarget(m_ItemID, m_Search);
+				from.Target = new CreateItemTarget(m_ItemID, m_Search, mIndex, mShowImage);
 			}
 
 			protected override void OnTargetCancel(Mobile from, TargetCancelType cancelType)
 			{
-                from.SendGump(new SearchImageGump(m_Index, m_Search, m_ShowImage));
+                from.SendGump(new SearchImageGump(mIndex, m_Search, mShowImage));
 				base.OnTargetCancel(from, cancelType);
 			}
 		}
